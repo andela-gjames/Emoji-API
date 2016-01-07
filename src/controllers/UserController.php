@@ -10,20 +10,14 @@ use Psr\Http\Message\ResponseInterface;
 
 class UserController extends BaseController
 {
-    public function __construct()
+    public function __construct($container)
     {
-        parent::__construct();
+        parent::__construct($container);
+
     }
 
     public function index(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $response           =   $response->withAddedHeader('Content-type', 'application/json');
-        $data               =   $request->getParsedBody();
-        $response_body      =   $response->getBody();
-
-        User::create(['username'=>'Ramos16', 'password'=>hash('sha256', 'Ramos16')]);
-
-        $response_body->write(json_encode(['message'=>'User Created']));
         return $response;
     }
 
@@ -48,7 +42,7 @@ class UserController extends BaseController
                 $user->save();
 
                 $data       =   [
-                    'jit'   =>  $jit,
+                    'jit'   =>  $user->jit,
                     'iat'   =>  $iat,
                     'exp'   =>  $exp,
                     'data'  =>  [
@@ -58,23 +52,12 @@ class UserController extends BaseController
                 ];
 
                 $token      =   JWT::encode($data, getenv('SECRET_KEY'));
-                $message = [
-                  'token'   =>  $token
-                ];
+                $message    = $this->getMessage($token, $response);
             } else {
-                $response   =   $response->withStatus(401);
-                $message    =   [
-                    'message'   =>  'Validation failed',
-                    'errors'    =>  [
-                        [
-                            'message'   =>  'Username or password incorrect'
-                        ]
-                    ]
-                ];
+                $message    =   $this->getMessage(static::AUTHENTICATIONERROR, $response, 401);
             }
         } else {
-            $response   =   $response->withStatus(400);
-            $message    =   ['message'   =>  'Bad Request'];
+                $message    =   $this->getMessage(static::BADREQUESTERROR, $response, 400);
         }
 
         $response_body->write(json_encode($message));
@@ -83,28 +66,19 @@ class UserController extends BaseController
 
     public function logout(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $response   =   $response->withAddedHeader('Content-type', 'application/json');
-        $token   =   $request->getHeader('Authorization');
-        $body   =   $response->getBody();
-        $token  =   str_replace("Bearer ", "", $token[0]);
-        $data   =   JWT::decode($token, getenv('SECRET_KEY'), array('HS256'));
-
+        $response   =   $response->withAddedHeader('content-type', 'application/json');
+        $token      =   $request->getHeader('Authorization');
+        $body       =   $response->getBody();
+        $token      =   str_replace("Bearer ", "", $token[0]);
+        $data       =   JWT::decode($token, getenv('SECRET_KEY'), array('HS256'));
 
         $user   =   User::find($data->data->uid);
 
-        if ($data->jit == $user->jit) {
+        $message = $this->authenticateRouteResquest($token, $user->jit, $response, 'You have been logged out');
+
+        if($message['status'] === 'success') {
             $user->jit = null;
             $user->save();
-            $message = [
-                'message' => 'You have been logged out'
-            ];
-
-            $response   =   $response->withStatus(200);
-        } else {
-            $message = [
-                'message' => 'Invalid Access'
-            ];
-            $response   =   $response->withStatus(401);
         }
 
         $body->write(json_encode($message));
