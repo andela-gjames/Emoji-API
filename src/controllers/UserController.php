@@ -78,4 +78,34 @@ class UserController extends BaseController
         $response_body->write(json_encode($message));
         return $response;
     }
+
+    public function logout(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $response   =   $response->withAddedHeader('Content-type', 'application/json');
+        $token   =   $request->getHeader('Authorization');
+        $body   =   $response->getBody();
+        $token  =   str_replace("Bearer ", "", $token[0]);
+        $data   =   JWT::decode($token, getenv('SECRET_KEY'), array('HS256'));
+
+
+        $user   =   User::find($data->data->uid);
+
+        if ($data->jit == $user->jit) {
+            $user->jit = null;
+            $user->save();
+            $message = [
+                'message' => 'You have been logged out'
+            ];
+
+            $response   =   $response->withStatus(200);
+        } else {
+            $message = [
+                'message' => 'Invalid Access'
+            ];
+            $response   =   $response->withStatus(401);
+        }
+
+        $body->write(json_encode($message));
+        return $response;
+    }
 }
