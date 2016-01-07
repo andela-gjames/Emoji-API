@@ -33,7 +33,7 @@ class Auth
         return intval($token->jit) === intval($jit);
     }
 
-    private function decodeToken($token)
+    public function decodeToken($token)
     {
         $token             =   str_replace("Bearer ", "", $token);
         $token          =   JWT::decode($token, getenv('SECRET_KEY'), array('HS256'));
