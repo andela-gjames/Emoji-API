@@ -27,31 +27,13 @@ class UserController extends BaseController
         $data               =   $request->getParsedBody();
         $response_body      =   $response->getBody();
 
-        if (array_key_exists('username', $data) && array_key_exists('password', $data)) {
+        if (isset($data['username'], $data['password'])) {
             $user   =   User::auth($data['username'], $data['password']);
-
             if (!!$user) {
-                $response   =   $response->withStatus(200);
-                $today      =   Carbon::now();
-                $iat        =   strtotime($today->toDateTimeString());
-                $exp        =   strtotime($today->addDays(10)->addHours(4)->toDateTimeString());
-                $jit        =   rand(1000, 999999999);
-
                 //Ensures user is not logged out from other device
-                $user->jit  =   $user->jit == null ? $jit : $user->jit;
+                $user->jit  =   $user->jit == null ? rand(1000, 999999999) : $user->jit;
+                $token      =   $this->buildToken($user->jit, $user->id, $user->username);
                 $user->save();
-
-                $data       =   [
-                    'jit'   =>  $user->jit,
-                    'iat'   =>  $iat,
-                    'exp'   =>  $exp,
-                    'data'  =>  [
-                                    'uid'       =>  $user->id,
-                                    'username'  =>  $user->username
-                                ]
-                ];
-
-                $token      =   JWT::encode($data, getenv('SECRET_KEY'));
                 $message    = $this->getMessage($token, $response);
             } else {
                 $message    =   $this->getMessage(static::AUTHENTICATIONERROR, $response, 401);
@@ -72,7 +54,7 @@ class UserController extends BaseController
         $token      =   str_replace("Bearer ", "", $token[0]);
         $data       =   JWT::decode($token, getenv('SECRET_KEY'), array('HS256'));
 
-        $user   =   User::find($data->data->uid);
+        $user       =   User::find($data->data->uid);
 
         $message = $this->authenticateRouteResquest($token, $user->jit, $response, 'You have been logged out');
 
@@ -83,5 +65,24 @@ class UserController extends BaseController
 
         $body->write(json_encode($message));
         return $response;
+    }
+
+    private function buildToken($jit, $uid, $username)
+    {
+        $today      =   Carbon::now();
+        $iat        =   strtotime($today->toDateTimeString());
+        $exp        =   strtotime($today->addDays(10)->addHours(4)->toDateTimeString());
+
+        $data       =   [
+            'jit'   =>  $jit,
+            'iat'   =>  $iat,
+            'exp'   =>  $exp,
+            'data'  =>  [
+                            'uid'       =>  $uid,
+                            'username'  =>  $username
+                        ]
+        ];
+        $token      =   JWT::encode($data, getenv('SECRET_KEY'));
+        return $token;
     }
 }
