@@ -89,4 +89,48 @@ class EmojiController extends BaseController
         return $response;
     }
 
+    public function update(ServerRequestInterface $request, ResponseInterface $response, $argc)
+    {
+        $response   =   $response->withAddedHeader('Content-type', 'application/json');
+        $body       =   $response->getBody();
+        $emoji      =   Emoji::with('keywords')->find($argc['id']);
+        if ($emoji != null ) {
+            $newData        =   $request->getParsedBody();
+
+            DB::transaction(function() use($emoji, $newData) {
+
+                $emoji->name    =   isset($newData['name']) ? $newData['name'] : $emoji->name;
+                $emoji->char    =   isset($newData['char']) ? $newData['char'] : $emoji->char;
+                $emoji->user_id     =   isset($newData['uid'])  ? $newData['uid']  : $emoji->user_id;
+                $emoji->category    =   isset($newData['category']) ? $newData['category'] : $emoji->category;
+
+                foreach ($newData['keywords'] as $key_id => $name) {
+                    $keyword = EmojiKeyword::find($key_id);
+
+                    if(!isset($keyword)) {
+                        $keyword = new EmojiKeyword();
+                        $keyword->emoji_id = $emoji->id;
+                    }
+                    $keyword->name = $name;
+                    $keyword->save();
+                }
+                $emoji->save();
+            });
+            $message        =   [
+                'status' => 'Success',
+                'message' => 'Emoji Updated'
+            ];
+
+        } else {
+            $message    =   [
+                'status' => 'Error',
+                'message' => 'Emoji not found'
+            ];
+        }
+        $body->write(json_encode($message));
+        return $response;
+    }
+
+
+
 }
