@@ -131,6 +131,57 @@ class EmojiController extends BaseController
         return $response;
     }
 
+    public function destroy(ServerRequestInterface $request, ResponseInterface $response, $argc)
+    {
+        $response   =   $response->withAddedHeader('Content-type', 'application/json');
+        $body       =   $response->getBody();
+        $message    =   [];
+        $emoji     =   Emoji::with('keywords')->find($argc['id']);
+
+        if(isset($emoji)) {
+            Db::transaction(function() use ($emoji) {
+                $emoji->delete();
+                $emoji->keywords()->delete();
+            });
+
+            $message = [
+                    "status" => "success",
+                    "message" => "Emoji '".$emoji->name."' deleted!"
+            ];
+        } else {
+            $message = [
+                "status" => "Error",
+                "message" => "Emoji Not found"
+            ];
+        }
+
+        $body->write(json_encode($message));
+        return $response;
+    }
+
+    private function buildEmojiData($emoji)
+    {
+        $result = array();
+
+        $result['id']       =   $emoji->id;
+        $result['name']     =   $emoji->name;
+        $result['char']     =   $emoji->char;
+
+        $keywords = array();
+        foreach ($emoji->keywords as $keyword) {
+            $keywords[$keyword->id]     =   $keyword->name;
+        }
+
+        $result['keywords']     =   $keywords;
+        $result['category']     =   $emoji->category;
+        $result['date_created']     =   $emoji->created_at;
+        $result['date_modified']    =   $emoji->updated_at;
+        $result['created_by']       =   $emoji->user->username;
+
+        return $result;
+    }
+
+
 
 
 }
