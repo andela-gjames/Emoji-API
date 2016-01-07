@@ -17,6 +17,20 @@ class EmojiController extends BaseController
         parent::__construct();
     }
 
+    public function index(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $response = $response->withAddedHeader('Content-type', 'application/json');
+        $emojis = Emoji::with('keywords')->get();
 
+        $result = array();
+
+        foreach ($emojis as $emoji) {
+            $result[] = $this->buildEmojiData($emoji);
+        }
+
+        $body   =    $response->getBody();
+        $body->write(json_encode($result));
+        return $response;
+    }
 
 }
