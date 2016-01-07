@@ -1,0 +1,11 @@
+[api]
+SECRET_KEY  = 0423540d94260d4b2b31b2ea64d68b4f49fabdcb6f53ea9fc3a1d88a177fc8fb
+
+[database]
+driver      = sqlite
+host        = localhost
+username    = ''
+password    = ''
+database    = database.sqlite
+charset     = utf8,
+collation   = utf8_unicode_ci
