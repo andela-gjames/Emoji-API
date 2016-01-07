@@ -52,40 +52,49 @@ class EmojiController extends BaseController
 
     public function create(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $response   =   $response->withAddedHeader('Content-type', 'application/json');
-        $body       =   $response->getBody();
-        $data       =   $request->getParsedBody();
-        $keywords   =   $data['keywords'];
-        $uid        =   $data['uid'];
-        $body       =   $response->getBody();
-        $message    =   '';
-        $user       =   User::find($uid);
+            $response   =   $response->withAddedHeader('Content-type', 'application/json');
+            $body       =   $response->getBody();
 
-        DB::transaction(function() use($uid, $data, $keywords, $body) {
-            $user   =   User::find($uid);
+            if($response->getHeader('Expired')[0]  != true) {
+                die();
+                $data       =   $request->getParsedBody();
+                $keywords   =   $data['keywords'];
+                $uid        =   $data['uid'];
+                $body       =   $response->getBody();
+                $message    =   '';
+                $user       =   User::find($uid);
 
-            if($user == null){
-                throw new \Exception('User does not exist');
-            }
+                DB::transaction(function() use($uid, $data, $keywords, $body) {
+                    $user   =   User::find($uid);
 
-            $emoji  =   [
-                'name' => $data['name'],
-                'char' => $data['char'],
-                'category' => $data['category']
-            ];
+                    if($user == null){
+                        throw new \Exception('User does not exist');
+                    }
 
-            $emoji = $user->emojis()->create($emoji);
-            foreach ($keywords as $keyword) {
-                $emoji->keywords()->create(['name' => $keyword]);
-            }
+                    $emoji  =   [
+                        'name' => $data['name'],
+                        'char' => $data['char'],
+                        'category' => $data['category']
+                    ];
 
+                    $emoji = $user->emojis()->create($emoji);
+                    foreach ($keywords as $keyword) {
+                        $emoji->keywords()->create(['name' => $keyword]);
+                    }
+
+                    $message    =   [
+                        'status' => 'Success',
+                        'message' => 'Emoji Created Sucessfully'
+                    ];
+                });
+        } else {
             $message    =   [
-                'status' => 'Success',
-                'message' => 'Emoji Created Sucessfully'
-            ];
-            $body->write(json_encode($message));
-        });
+                        'status' => 'Unauthorized Access',
+                        'message' => 'Token has expired, login to access'
+                    ];
+        }
 
+        $body->write(json_encode($message));
         return $response;
     }
 
