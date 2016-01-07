@@ -1,7 +1,7 @@
 <?php
 require 'vendor/autoload.php';
-require __DIR__.'/middlewares.php';
 use \Slim\App;
+use \Slim\Container;
 use BB8\Emoji\Database\Connection;
 use BB8\Emoji\Models\User;
 use BB8\Emoji\Database\Schema;
@@ -10,15 +10,27 @@ use Psr\Http\Message\ServerRequestInterface;
 
 $connection = new Connection();
 Schema::createSchema();
+
 $configuration = [
     'settings' => [
         'displayErrorDetails' => true,
     ],
 ];
-$app = new App($configuration);
+
+//Initialize a new dependency container
+$container  =   new Container();
+
+//Register Dependencies
+$container['auth']      =   function($container) {
+    return new BB8\Emoji\Auth($container);
+};
+
+//Initialize the slim app
+$app    =   new App($container, $configuration);
 
 //Index page
 $app->get('/', 'BB8\Emoji\Controllers\UserController:index');
+
 
 //Login Route
 $app->post('/auth/login', 'BB8\Emoji\Controllers\UserController:login');
@@ -33,7 +45,7 @@ $app->get('/emojis', 'BB8\Emoji\Controllers\EmojiController:index');
 $app->get('/emoji/{id}', 'BB8\Emoji\Controllers\EmojiController:show');
 
 //Adds a new Emoji
-$app->post('/emojis', 'BB8\Emoji\Controllers\EmojiController:create')->add($mwCheckToken);
+$app->post('/emojis', 'BB8\Emoji\Controllers\EmojiController:create');
 
 //Updates an Emoji
 $app->put('/emojis/{id}', 'BB8\Emoji\Controllers\EmojiController:update');
