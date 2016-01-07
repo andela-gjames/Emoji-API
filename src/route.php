@@ -1,5 +1,6 @@
 <?php
 require 'vendor/autoload.php';
+require __DIR__.'/middlewares.php';
 use \Slim\App;
 use BB8\Emoji\Database\Connection;
 use BB8\Emoji\Models\User;
@@ -32,7 +33,7 @@ $app->get('/emojis', 'BB8\Emoji\Controllers\EmojiController:index');
 $app->get('/emoji/{id}', 'BB8\Emoji\Controllers\EmojiController:show');
 
 //Adds a new Emoji
-$app->post('/emojis', 'BB8\Emoji\Controllers\EmojiController:create');
+$app->post('/emojis', 'BB8\Emoji\Controllers\EmojiController:create')->add($mwCheckToken);
 
 //Updates an Emoji
 $app->put('/emojis/{id}', 'BB8\Emoji\Controllers\EmojiController:update');
