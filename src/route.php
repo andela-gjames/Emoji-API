@@ -11,14 +11,25 @@ use Psr\Http\Message\ServerRequestInterface;
 $connection = new Connection();
 Schema::createSchema();
 
-$configuration = [
-    'settings' => [
-        'displayErrorDetails' => true,
-    ],
-];
 
 //Initialize a new dependency container
 $container  =   new Container();
+
+$container['errorHandler'] = function ($container) {
+  return function ($request, $response, $exception) use ($container) {
+    $data = [
+      'code' => $exception->getCode(),
+      'message' => $exception->getMessage(),
+      'file' => $exception->getFile(),
+      'line' => $exception->getLine(),
+      'trace' => explode("\n", $exception->getTraceAsString()),
+    ];
+
+    return $container->get('response')->withStatus(500)
+             ->withHeader('Content-Type', 'application/json')
+             ->write(json_encode($data));
+  };
+};
 
 //Register Dependencies
 $container['auth']      =   function($container) {
@@ -26,7 +37,7 @@ $container['auth']      =   function($container) {
 };
 
 //Initialize the slim app
-$app    =   new App($container, $configuration);
+$app    =   new App($container);
 
 //Index page
 $app->get('/', 'BB8\Emoji\Controllers\UserController:index');

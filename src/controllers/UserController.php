@@ -56,7 +56,7 @@ class UserController extends BaseController
 
         $user       =   User::find($data->data->uid);
 
-        $message = $this->authenticateRouteResquest($token, $user->jit, $response, 'You have been logged out');
+        $message = $this->authenticateRouteRequest($token, $user->jit, $response, 'You have been logged out');
 
         if($message['status'] === 'success') {
             $user->jit = null;
