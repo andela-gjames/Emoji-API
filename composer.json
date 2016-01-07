@@ -11,6 +11,7 @@
     "require":{
         "php": ">=5.0",
         "slim/slim":"*",
+        "nesbot/carbon":"*",
         "slim/twig-view":"*",
         "vlucas/phpdotenv":"*",
         "firebase/php-jwt":"*",
