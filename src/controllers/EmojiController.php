@@ -50,4 +50,43 @@ class EmojiController extends BaseController
         return $response;
     }
 
+    public function create(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $response   =   $response->withAddedHeader('Content-type', 'application/json');
+        $body       =   $response->getBody();
+        $data       =   $request->getParsedBody();
+        $keywords   =   $data['keywords'];
+        $uid        =   $data['uid'];
+        $body       =   $response->getBody();
+        $message    =   '';
+        $user       =   User::find($uid);
+
+        DB::transaction(function() use($uid, $data, $keywords, $body) {
+            $user   =   User::find($uid);
+
+            if($user == null){
+                throw new \Exception('User does not exist');
+            }
+
+            $emoji  =   [
+                'name' => $data['name'],
+                'char' => $data['char'],
+                'category' => $data['category']
+            ];
+
+            $emoji = $user->emojis()->create($emoji);
+            foreach ($keywords as $keyword) {
+                $emoji->keywords()->create(['name' => $keyword]);
+            }
+
+            $message    =   [
+                'status' => 'Success',
+                'message' => 'Emoji Created Sucessfully'
+            ];
+            $body->write(json_encode($message));
+        });
+
+        return $response;
+    }
+
 }
