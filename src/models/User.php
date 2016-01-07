@@ -22,8 +22,4 @@ class User extends BaseModel
         }
         return false;
     }
-
-    public static function isAuthenticated($token)
-    {
-    }
 }
