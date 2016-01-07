@@ -16,4 +16,7 @@ $configuration = [
 ];
 $app = new App($configuration);
 
+//Index page
+$app->get('/', 'BB8\Emoji\Controllers\UserController:index');
+
 $app->run();
