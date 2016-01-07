@@ -92,6 +92,7 @@ class EmojiController extends BaseController
         $response   =   $response->withAddedHeader('Content-type', 'application/json');
         $body       =   $response->getBody();
         $emoji      =   Emoji::with('keywords')->find($argc['id']);
+
         $token      =   $request->getHeader('Authorization')[0];
         $decodedToken    =   $this->auth->decodeToken($token);
         $uid        =   $decodedToken->data->uid;
