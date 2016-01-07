@@ -1,3 +1,4 @@
 vendor
 composer.lock
-.env
+src/database/database2.sqlite
+src/views
