@@ -1,6 +1,7 @@
 <?php
 namespace BB8\Emoji\Controllers;
 
+use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use BB8\Emoji\Models\User;
 use BB8\Emoji\Controllers\BaseController;
@@ -14,7 +15,8 @@ class UserController extends BaseController
         parent::__construct();
     }
 
-    public function index(ServerRequestInterface $request, ResponseInterface $response){
+    public function index(ServerRequestInterface $request, ResponseInterface $response)
+    {
         $response           =   $response->withAddedHeader('Content-type', 'application/json');
         $data               =   $request->getParsedBody();
         $response_body      =   $response->getBody();
@@ -36,10 +38,10 @@ class UserController extends BaseController
 
             if (!!$user) {
                 $response   =   $response->withStatus(200);
-
-                $iat        =   time();
+                $today      =   Carbon::now();
+                $iat        =   strtotime($today->toDateTimeString());
+                $exp        =   strtotime($today->addDays(10)->addHours(4)->toDateTimeString());
                 $jit        =   rand(1000, 999999999);
-                $exp        =   $iat + 1000000000;
 
                 //Ensures user is not logged out from other device
                 $user->jit  =   $user->jit == null ? $jit : $user->jit;
