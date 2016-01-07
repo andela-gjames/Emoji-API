@@ -46,7 +46,7 @@ class BaseController
 
     protected function getMessage($message, &$response, $errorStatus = null)
     {
-        $type = ($errorStatus == null) ? 'success' : 'error';
+        $type = ($errorStatus == 200 || $errorStatus == null) ? 'success' : 'error';
         $response = ($errorStatus == null) ? $response->withStatus(200) : $response->withStatus($errorStatus);
         return [
             'status'    => $type,
