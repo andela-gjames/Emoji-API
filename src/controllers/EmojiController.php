@@ -174,8 +174,8 @@ class EmojiController extends BaseController
 
         $result['keywords']     =   $keywords;
         $result['category']     =   $emoji->category;
-        $result['date_created']     =   $emoji->created_at;
-        $result['date_modified']    =   $emoji->updated_at;
+        $result['date_created']     =   $emoji->created_at->toDateString();
+        $result['date_modified']    =   $emoji->updated_at->toDateString();
         $result['created_by']       =   $emoji->user->username;
 
         return $result;
