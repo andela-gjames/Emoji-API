@@ -34,7 +34,7 @@ class EmojiController extends BaseController
 
     public function show(ServerRequestInterface $request, ResponseInterface $response, $argc)
     {
-        $response   =   $response->withAddedHeader('Content-type', 'application/json');
+        $response   =   $response->withAddedHeader('content-type', 'application/json');
         $body       =   $response->getBody();
 
         $emoji      =   Emoji::find($argc['id']);
@@ -43,6 +43,9 @@ class EmojiController extends BaseController
         if ($emoji != null)
         {
             $result     =   $this->buildEmojiData($emoji);
+        } else {
+            $response = $response->withStatus(404);
+            $result     =   $this->getMessage(static::EMOJINOTFOUNDERROR, $response, 404);
         }
 
         $body->write(json_encode($result));

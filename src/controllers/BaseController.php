@@ -15,13 +15,10 @@ class BaseController
 
 
     protected $auth;
+
     public function __construct($container)
     {
         $this->auth = $container->get('auth');
-        $dotenv = new \Dotenv\Dotenv(__DIR__.'/../../');
-        $dotenv->load();
-
-        $connection = new Connection();
     }
 
     protected function authenticateRouteRequest($token, $jit, &$response, $successMessage, $status = 200, $raw = false)

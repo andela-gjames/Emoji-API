@@ -7,7 +7,5 @@ class BaseModel extends \Illuminate\Database\Eloquent\Model
     public function __construct(array $attribute = [])
     {
         parent::__construct($attribute);
-        $dotenv = new \Dotenv\Dotenv(__DIR__.'/../../');
-        $dotenv->load();
     }
 }
