@@ -12,6 +12,5 @@ deploy:
   on: develop
   api_key:
     secure: 435dd6e6-c324-4c87-ad56-115862b6b355
-
   app:
-    production: api-emojicon
+    develop: api-emojicon
