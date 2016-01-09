@@ -15,4 +15,13 @@ class Emoji  extends BaseModel
     {
         return $this->hasMany("BB8\Emoji\Models\EmojiKeyword");
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function($emoji) {
+             $emoji->keywords()->delete();
+        });
+    }
 }

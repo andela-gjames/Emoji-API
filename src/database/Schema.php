@@ -24,7 +24,7 @@ class Schema
                 $table->string('char');
                 $table->string('category');
                 $table->integer('user_id');
-                $table->foreign('user_id')->references('id')->on('users');
+//                $table->foreign('user_id')->references('id')->on('users');
                 $table->timestamps();
             });
         }
@@ -34,7 +34,7 @@ class Schema
                 $table->increments('id')->onDelete('cascade');
                 $table->string('name')->onDelete('cascade');
                 $table->integer('emoji_id')->onDelete('cascade');
-                $table->foreign('emoji_id')->references('id')->on('emoji')->onDelete('cascade');
+//                $table->foreign('emoji_id')->references('id')->on('emoji')->onDelete('cascade');
             });
         }
     }

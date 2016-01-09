@@ -22,4 +22,13 @@ class User extends BaseModel
         }
         return false;
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function($user) {
+             $user->emojis()->delete();
+        });
+    }
 }

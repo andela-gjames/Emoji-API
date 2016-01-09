@@ -14,7 +14,7 @@ class Connection
         $this->capsule->addConnection(array(
             'driver'    => getenv('driver'),
             'host'      => getenv('host'),
-            'database'  => __DIR__.'/'.getenv('database'),
+            'database'  => getenv('database'),
             'charset'   => getenv('charset'),
             'username'  => getenv('username'),
             'password'  => getenv('password'),

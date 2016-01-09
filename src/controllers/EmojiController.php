@@ -19,7 +19,7 @@ class EmojiController extends BaseController
 
     public function index(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $response = $response->withAddedHeader('content-type', 'application/json');
+        $response = $response->withAddedHeader('Content-type', 'application/json');
         $emojis = Emoji::with('keywords')->get();
         $body   =    $response->getBody();
 
