@@ -1,5 +1,4 @@
 vendor
-composer.lock
 src/database/database.sqlite
 src/database/database2.sqlite
 src/views
