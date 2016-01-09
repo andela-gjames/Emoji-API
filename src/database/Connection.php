@@ -8,7 +8,11 @@ class Connection
     public function __construct()
     {
         $dotenv = new \Dotenv\Dotenv(__DIR__.'/../../');
-        $dotenv->load();
+
+        if(!getenv('APP_ENV'))
+        {
+            $dotenv->load();
+        }
 
         $this->capsule = new Capsule();
         $this->capsule->addConnection(array(

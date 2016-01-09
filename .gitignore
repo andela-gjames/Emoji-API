@@ -2,3 +2,5 @@ vendor
 src/database/database.sqlite
 src/database/database2.sqlite
 src/views
+.env
+dump

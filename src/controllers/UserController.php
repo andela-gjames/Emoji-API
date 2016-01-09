@@ -18,11 +18,8 @@ class UserController extends BaseController
 
     public function index(ServerRequestInterface $request, ResponseInterface $response)
     {
-        $response   =   $response->withAddedHeader('Content-type', 'application/json');
         $body = $response->getBody();
-        $token      =   $request->getParsedBody();
-        $token = ['token' => $token];
-        $body->write(json_encode($token));
+        $body->write("<H1>WELCOME TO EMOJICON</H1>");
         return $response;
     }
 
