@@ -7,3 +7,8 @@ php:
 install:
   - composer self-update
   - composer install
+deploy:
+  provider: heroku
+  api_key:
+    secure: 435dd6e6-c324-4c87-ad56-115862b6b355
+  app: api-emojicon

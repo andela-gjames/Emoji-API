@@ -5,6 +5,7 @@ use BB8\Emoji\Database\Connection;
 class BaseController
 {
     const INVALIDTOKENVERSIONERROR = "Usage of wrong token version";
+    const LOGINTOACCESSERROR    = "Unauthorized: Login to access";
     const USERDOESNOTEXISTERROR = 'User does not exist';
     const AUTHENTICATIONERROR   = 'Username or password incorrect';
     const TOKENEXPIREDERROR     = 'Token has expired, login to access';

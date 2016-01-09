@@ -9,7 +9,7 @@ class SetUpDb
         $DBH = new \PDO('sqlite:'.__DIR__.'/../../src/database/database.sqlite');
         $DBH->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
-        $DBH->exec("INSERT OR IGNORE INTO 'users' VALUES(1000, 'Ramos16','39c107b3aaa5cc2455c5ed509f8dad6028768aad4663bbd4805c0a4cbd533880',504442472,'2016-01-05 23:04:47','2016-01-07 21:33:20');");
+        $DBH->exec("INSERT OR IGNORE INTO 'users' VALUES(1000, 'root','4813494d137e1631bba301d5acab6e7bb7aa74ce1185d456565ef51d737677b2', null,'2016-01-05 23:04:47','2016-01-07 21:33:20');");
 
         $DBH->exec("INSERT OR IGNORE INTO 'emojis' VALUES(1001,'Scared Face','scaredfaceicon','scared',1000,'2016-01-05 23:15:58','2016-01-08 00:03:06');");
         $DBH->exec("INSERT OR IGNORE INTO 'emojis' VALUES(1002,'Happy Face','happyfaceicon','happy',1000,'2016-01-05 23:15:58','2016-01-08 00:03:06');");

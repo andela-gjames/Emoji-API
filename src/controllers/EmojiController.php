@@ -65,25 +65,25 @@ class EmojiController extends BaseController
         $user       =   User::find($uid);
 
         $user   =   User::find($uid);
-        if($user == null){
-            throw new \Exception(static::USERDOESNOTEXISTERROR);
-        }
+        if($user != null){
+            $message = $this->authenticateRouteRequest($token, $user->jit, $response, static::EMOJICREATED, 201);
 
-        $message = $this->authenticateRouteRequest($token, $user->jit, $response, static::EMOJICREATED, 201);
+            $emoji  =   [
+                    'name' => $data['name'],
+                    'char' => $data['char'],
+                    'category' => $data['category']
+            ];
 
-        $emoji  =   [
-                'name' => $data['name'],
-                'char' => $data['char'],
-                'category' => $data['category']
-        ];
-
-        if($message['status'] == 'success') {
-            DB::transaction(function() use($user, $emoji, $keywords) {
-                    $emoji = $user->emojis()->create($emoji);
-                    foreach ($keywords as $keyword) {
-                        $emoji->keywords()->create(['name' => $keyword]);
-                    }
-            });
+            if($message['status'] == 'success') {
+                DB::transaction(function() use($user, $emoji, $keywords) {
+                        $emoji = $user->emojis()->create($emoji);
+                        foreach ($keywords as $keyword) {
+                            $emoji->keywords()->create(['name' => $keyword]);
+                        }
+                });
+            }
+        } else {
+            $message    =   $this->getMessage(static::USERDOESNOTEXISTERROR, $response, 401);
         }
 
         $body->write(json_encode($message));

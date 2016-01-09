@@ -53,7 +53,7 @@ $app->get('/auth/logout', 'BB8\Emoji\Controllers\UserController:logout');
 $app->get('/emojis', 'BB8\Emoji\Controllers\EmojiController:index');
 
 //Gets an emoji
-$app->get('/emoji/{id}', 'BB8\Emoji\Controllers\EmojiController:show');
+$app->get('/emojis/{id}', 'BB8\Emoji\Controllers\EmojiController:show');
 
 //Adds a new Emoji
 $app->post('/emojis', 'BB8\Emoji\Controllers\EmojiController:create');
