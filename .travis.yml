@@ -7,6 +7,12 @@ php:
 install:
   - composer self-update
   - composer install
+addons:
+  postgresql: "9.3"
+services:
+  - postgresql
+before_script:
+  - psql -c 'create database emojis_test;' -U postgres
 deploy:
   provider: heroku
   on:
