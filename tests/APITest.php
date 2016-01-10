@@ -27,7 +27,7 @@ class APITest extends \PHPUnit_Framework_TestCase
         ]);
 
         $login          =   json_decode($response->getBody(), true);
-        $this->token    =   $login['token'];
+//        $this->token    =   $login['token'];
     }
 
 //    public function testAuthLogin()
