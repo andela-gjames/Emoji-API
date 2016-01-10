@@ -27,27 +27,46 @@ class APITest extends \PHPUnit_Framework_TestCase
         ]);
 
         $login          =   json_decode($response->getBody(), true);
-//        $this->token    =   $login['token'];
+        $this->token    =   $login['token'];
     }
 
-//    public function testAuthLogin()
-//    {
-//         $response   =   $this->client->post(
-//             'auth/login',
-//             [
-//             'exceptions'=> false,
-//             'form_params' => ['username' => 'test-root', 'password' => 'test-root']
-//             ]
-//         );
-//        $result         =   json_decode($response->getBody(), true);
-//
-//        $this->assertNotNull($result['token']);
-//        $this->assertSame($response->getStatusCode(), 200);
-//    }
-
-    public function testCases()
+    public function testAuthLogin()
     {
-        $this->assertTrue(true, true);
+         $response   =   $this->client->post(
+             'auth/login',
+             [
+             'exceptions'=> false,
+             'form_params' => ['username' => 'test-root', 'password' => 'test-root']
+             ]
+         );
+        $result         =   json_decode($response->getBody(), true);
+
+        $this->assertNotNull($result['token']);
+        $this->assertSame($response->getStatusCode(), 200);
+    }
+
+    public function testAuthLoginInvalidUserOrPasswordFailure()
+    {
+        $response   =   $this->client->post('auth/login', [
+            'exceptions'=> false,
+            'form_params' => ['username' => 'root', 'password' => 'not-root']
+        ]);
+        $result        =   json_decode($response->getBody(), true);
+
+        $this->assertSame($result['status'], 'error');
+        $this->assertSame($response->getStatusCode(), 401);
+    }
+
+    public function testGetAllEmojis()
+    {
+        $response   =   $this->client->get('emojis', ['exceptions'=> false]);
+
+        $data       =   json_decode($response->getBody(), true);
+
+        $this->assertSame($response->getStatusCode(), 200);
+        $this->assertSame($response->getHeader('Content-Type')[0], 'application/json');
+//        $this->assertSame($data, 'Happy Face');
+//        $this->assertSame($data[0]['category'], 'Happy');
     }
 
     public function tearDown()
