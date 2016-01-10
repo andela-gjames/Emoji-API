@@ -1,4 +1,5 @@
 <?php
+
 namespace BB8\Emoji\Database;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -8,7 +9,7 @@ class Schema
     public static function createSchema()
     {
         if (!Capsule::schema()->hasTable('users')) {
-            Capsule::schema()->create('users', function($table){
+            Capsule::schema()->create('users', function ($table) {
                 $table->increments('id');
                 $table->string('username')->unique();
                 $table->string('password');
@@ -18,7 +19,7 @@ class Schema
         }
 
         if (!Capsule::schema()->hasTable('emojis')) {
-            Capsule::schema()->create('emojis', function($table) {
+            Capsule::schema()->create('emojis', function ($table) {
                 $table->increments('id');
                 $table->string('name');
                 $table->string('char');
