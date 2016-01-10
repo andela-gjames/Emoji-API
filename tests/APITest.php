@@ -65,7 +65,7 @@ class APITest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($response->getStatusCode(), 200);
         $this->assertSame($response->getHeader('Content-Type')[0], 'application/json');
-        $this->assertSame($data, 'Happy Face');
+        $this->assertSame($data[0]['name'], 'Happy Face');
         $this->assertSame($data[0]['category'], 'Happy');
     }
 
