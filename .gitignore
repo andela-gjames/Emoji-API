@@ -2,3 +2,4 @@ vendor
 src/views
 .env
 dump
+composer.lock

@@ -28,3 +28,4 @@ deploy:
   app:
     master: api-emojicon
     develop: api-emojicon-staging
+
