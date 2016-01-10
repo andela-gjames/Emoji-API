@@ -15,15 +15,25 @@ class Connection
         }
 
         $this->capsule = new Capsule();
-        $this->capsule->addConnection(array(
-            'driver'    => getenv('driver'),
-            'host'      => getenv('host'),
-            'database'  => getenv('database'),
-            'charset'   => getenv('charset'),
-            'username'  => getenv('username'),
-            'password'  => getenv('password'),
-            'collation' => getenv('collation')
-        ));
+
+        if(getenv('APP_ENV') == 'testing') {
+           $this->capsule->addConnection(array(
+                'driver'    => 'sqlite',
+                'database'  => __DIR__.'/database.sqlite',
+                'charset'   => getenv('charset'),
+                'collation' => getenv('collation')
+            ));
+        } else {
+            $this->capsule->addConnection(array(
+                'driver'    => getenv('driver'),
+                'host'      => getenv('host'),
+                'database'  => getenv('database'),
+                'charset'   => getenv('charset'),
+                'username'  => getenv('username'),
+                'password'  => getenv('password'),
+                'collation' => getenv('collation')
+            ));
+        }
 
         $this->capsule->bootEloquent();
         $this->capsule->setAsGlobal();
