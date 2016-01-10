@@ -29,6 +29,18 @@ class APITest extends \PHPUnit_Framework_TestCase
         static::$token    =   $login['message'];
     }
 
+    public function testAuthLoginFailed()
+    {
+        $response   =   static::$client->post('auth/login', [
+            'exceptions'=> false,
+            'form_params' => ['username' => 'root', 'password' => 'not-root']
+        ]);
+        $result        =   json_decode($response->getBody(), true);
+
+        $this->assertSame($result['status'], 'error');
+        $this->assertSame($response->getStatusCode(), 401);
+    }
+
     public function testAuthLogin()
     {
          $response   =   static::$client->post(
@@ -42,6 +54,11 @@ class APITest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($result['status'], 'success');
         $this->assertSame($response->getStatusCode(), 200);
+    }
+
+    public static function tearDownAfterClass()
+    {
+        SetUpDb::tearDown();
     }
 
 
