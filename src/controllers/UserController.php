@@ -54,7 +54,7 @@ class UserController extends BaseController
                 $user->jit  =   $user->jit == null ? rand(1000, 999999999) : $user->jit;
                 $token      =   $this->buildToken($user->jit, $user->id, $user->username);
                 $user->save();
-                $message    = $this->getMessage($token, $response);
+                $message    = ['token' => $token];
             } else {
                 $message    =   $this->getMessage(static::AUTHENTICATIONERROR, $response, 401);
             }
