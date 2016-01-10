@@ -42,6 +42,8 @@ $app    =   new App($container);
 //Index page
 $app->get('/', 'BB8\Emoji\Controllers\UserController:index');
 
+//Create new user
+$app->post('/signup', 'BB8\Emoji\Controllers\UserController:create');
 
 //Login Route
 $app->post('/auth/login', 'BB8\Emoji\Controllers\UserController:login');

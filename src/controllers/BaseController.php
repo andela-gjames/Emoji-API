@@ -13,6 +13,7 @@ class BaseController
     const EMOJINOTFOUNDERROR    = 'Emoji not found';
     const EMOJICREATED          = 'Emoji created sucessfully';
     const EMOJIUPDATED          = 'Emoji updated';
+    const USERCREATED           = 'User created';
 
 
     protected $auth;
