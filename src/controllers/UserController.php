@@ -22,21 +22,21 @@ class UserController extends BaseController
         $body->write("<H1>WELCOME TO EMOJICON</H1>");
         return $response;
     }
-    
+
     public function create(ServerRequestInterface $request, ResponseInterface $response)
     {
         $response = $response->withAddedHeader('content-type', 'application/json');
         $data   =   $request->getParsedBody();
         $body   =   $response->getBody();
-        
+
         $user   =   User::where('username', '=', $data['username'])->first();
         if($user == null) {
-            User::create(['username' => $data['username'], hash('SHA256', $data['password'])]);
+            User::create(['username' => $data['username'], 'password'=>hash('SHA256', $data['password'])]);
             $message = $this->getMessage(static::USERCREATED, $response);
         } else {
             $message = $this->getMessage('user already exists', $response, 200);
         }
-        
+
         $body->write(json_encode($message));
         return $response;
     }
