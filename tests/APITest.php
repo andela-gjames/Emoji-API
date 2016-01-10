@@ -29,22 +29,20 @@ class APITest extends \PHPUnit_Framework_TestCase
         static::$token    =   $login['message'];
     }
 
+    public function testAuthLogin()
+    {
+         $response   =   static::$client->post(
+             'auth/login',
+             [
+             'exceptions'=> false,
+             'form_params' => ['username' => 'test-root', 'password' => 'test-root']
+             ]
+         );
+        $result         =   json_decode($response->getBody(), true);
+        $users = User::all();
 
-
-//    public function testAuthLogin()
-//    {
-//         $response   =   static::$client->post(
-//             'auth/login',
-//             [
-//             'exceptions'=> false,
-//             'form_params' => ['username' => 'test-root', 'password' => 'test-root']
-//             ]
-//         );
-//        $result         =   json_decode($response->getBody(), true);
-//        $users = User::all();
-//
-//        $this->assertSame(User::auth('test-root', 'test-root')->username, $result);
-//    }
+        $this->assertSame(User::auth('test-root', 'test-root')->username, $result);
+    }
 
     public function testCorrect()
     {
