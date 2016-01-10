@@ -1,28 +1,26 @@
 <?php
+
 require 'vendor/autoload.php';
 use \Slim\App;
 use \Slim\Container;
 use BB8\Emoji\Database\Connection;
-use BB8\Emoji\Models\User;
 use BB8\Emoji\Database\Schema;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use BB8\Emoji\Models\User;
 
 $connection = new Connection();
 Schema::createSchema();
 
-
 //Initialize a new dependency container
-$container  =   new Container();
+$container = new Container();
 
 $container['errorHandler'] = function ($container) {
   return function ($request, $response, $exception) use ($container) {
     $data = [
-      'code' => $exception->getCode(),
+      'code'    => $exception->getCode(),
       'message' => $exception->getMessage(),
-      'file' => $exception->getFile(),
-      'line' => $exception->getLine(),
-      'trace' => explode("\n", $exception->getTraceAsString()),
+      'file'    => $exception->getFile(),
+      'line'    => $exception->getLine(),
+      'trace'   => explode("\n", $exception->getTraceAsString()),
     ];
 
     return $container->get('response')->withStatus(500)
@@ -32,12 +30,12 @@ $container['errorHandler'] = function ($container) {
 };
 
 //Register Dependencies
-$container['auth']      =   function($container) {
+$container['auth'] = function ($container) {
     return new BB8\Emoji\Auth($container);
 };
 
 //Initialize the slim app
-$app    =   new App($container);
+$app = new App($container);
 
 //Index page
 $app->get('/', 'BB8\Emoji\Controllers\UserController:index');
@@ -68,6 +66,5 @@ $app->patch('/emojis/{id}', 'BB8\Emoji\Controllers\EmojiController:update');
 
 //Deletes an Emoji
 $app->delete('/emojis/{id}', 'BB8\Emoji\Controllers\EmojiController:destroy');
-
 
 $app->run();

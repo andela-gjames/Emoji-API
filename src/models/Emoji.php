@@ -1,10 +1,10 @@
 <?php
+
 namespace BB8\Emoji\Models;
-use \Illuminate\Database\Eloquent\Model;
-use BB8\Emoji\Models\BaseModel;
-class Emoji  extends BaseModel
+
+class Emoji extends BaseModel
 {
-    protected $fillable = array('name', 'char', 'category', 'created_at', 'updated_at');
+    protected $fillable = ['name', 'char', 'category', 'created_at', 'updated_at'];
 
     public function user()
     {
@@ -20,7 +20,7 @@ class Emoji  extends BaseModel
     {
         parent::boot();
 
-        static::deleting(function($emoji) {
+        static::deleting(function ($emoji) {
              $emoji->keywords()->delete();
         });
     }
