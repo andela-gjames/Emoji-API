@@ -69,6 +69,21 @@ class APITest extends \PHPUnit_Framework_TestCase
         $this->assertSame($data[0]['category'], 'Happy');
     }
 
+    public function testGetSingleEmoji()
+    {
+        $emojiId    =   $this->mockIds['emojiId'];
+        $keywordID   =   $this->mockIds['keywordsId'][0];
+
+        $response       =   $this->client->get("emojis/$emojiId", ['exceptions'=> false]);
+        $contentType    =   $response->getHeader('Content-Type')[0];
+        $data           =   json_decode($response->getBody(), true);
+
+        $this->assertSame($response->getStatusCode(), 200);
+        $this->assertSame($data['keywords'][$keywordID], 'happy');
+        $this->assertSame($response->getHeader('Content-Type')[0], 'application/json');
+    }
+
+
 
     public static function tearDownAfterClass()
     {

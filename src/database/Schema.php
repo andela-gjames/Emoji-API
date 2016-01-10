@@ -41,7 +41,7 @@ class Schema
 
     public static function dropAllSchema()
     {
-        Capsule::schema()->dropIfExists('keyword');
+        Capsule::schema()->dropIfExists('keywords');
         Capsule::schema()->dropIfExists('emojis');
         Capsule::schema()->dropIfExists('users');
     }
