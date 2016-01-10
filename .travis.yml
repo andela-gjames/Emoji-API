@@ -8,16 +8,7 @@ install:
   - composer self-update
   - composer install
 env:
- - SECRET_KEY=0423540d94260d4b2b31b2ea64d68b4f49fabdcb6f53ea9fc3a1d88a177fc8fb
  - APP_ENV=testing
- - database=d34js32qc5du82
- - driver=pgsql
- - host=ec2-54-83-52-71.compute-1.amazonaws.com
- - username=uynpjvrxsfjssw
- - password=srpwnUg7PtQAmjhgWr4KTUGS8Z
- - charset=utf8
- - collation=utf8_unicode_ci
-
 deploy:
   provider: heroku
   on:
