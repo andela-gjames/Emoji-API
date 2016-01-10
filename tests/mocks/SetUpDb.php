@@ -12,6 +12,12 @@ class SetUpDb
     private static $conn;
     public static function setUp()
     {
+        $dotenv = new \Dotenv\Dotenv(__DIR__.'/../../');
+        if(!getenv('APP_ENV'))
+        {
+            $dotenv->load();
+        }
+
         static::$conn = new Connection();
         Schema::createSchema();
         $user = User::firstOrCreate(['username'=>'test-root', 'password' => hash('SHA256', 'test-root')]);

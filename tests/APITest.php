@@ -17,7 +17,7 @@ class APITest extends \PHPUnit_Framework_TestCase
     {
         $this->mockIds = SetUpDb::setUp();
         $this->client = new Client([
-            'base_uri' => 'http://api-emojicon-staging.herokuapp.com/',
+            'base_uri' => getenv('base_uri'),
             'timeout'  => 10000.0
         ]);
 
@@ -82,8 +82,6 @@ class APITest extends \PHPUnit_Framework_TestCase
         $this->assertSame($data['keywords'][$keywordID], 'happy');
         $this->assertSame($response->getHeader('Content-Type')[0], 'application/json');
     }
-
-
 
     public static function tearDownAfterClass()
     {
