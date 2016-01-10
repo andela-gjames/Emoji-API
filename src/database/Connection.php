@@ -18,7 +18,7 @@ class Connection
 
         if(getenv('APP_ENV') == 'testing') {
            $this->capsule->addConnection(array(
-                'driver'    => 'sqlite',
+                'driver'    => getenv('driver'),
                 'database'  => __DIR__.'/database.sqlite',
                 'charset'   => getenv('charset'),
                 'collation' => getenv('collation')
