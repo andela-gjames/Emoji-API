@@ -18,7 +18,7 @@ class APITest extends \PHPUnit_Framework_TestCase
         static::$mockIds = SetUpDb::setUp();
         static::$client = new Client([
             'base_uri' => 'http://api-emojicon-staging.herokuapp.com',
-            'timeout'  => 10.0
+            'timeout'  => 10000.0
         ]);
 
         $response   =   static::$client->post('auth/login', [
