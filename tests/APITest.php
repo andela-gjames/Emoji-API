@@ -83,6 +83,48 @@ class APITest extends \PHPUnit_Framework_TestCase
         $this->assertSame($response->getHeader('Content-Type')[0], 'application/json');
     }
 
+    public function testGetSingleEmojiFailed()
+    {
+        $response    =   $this->client->get('emojis/100', ['exceptions'=> false]);
+        $data   =   json_decode($response->getBody(), true);
+        $this->assertSame($response->getStatusCode(), 404);
+        $this->assertSame($data['status'], 'error');
+    }
+
+    public function testInsertEmoji()
+    {
+        $response = $this->setUpInsertData($this->mockIds['userId']);
+        $data =   json_decode($response->getBody(), true);
+        $this->assertSame($response->getStatusCode(), 201);
+        $this->assertSame($response->getHeader('Content-Type')[0], 'application/json');
+        $this->assertSame($data['status'], 'success');
+        $this->assertSame($data['message'], 'Emoji created sucessfully');
+    }
+
+    public function setUpInsertData()
+    {
+         $data = [
+            'name' => 'Angry Face',
+            'char' => 'angryfacechar',
+            'keywords' => [
+                'angry', 'annoyed'
+            ],
+            'category' => 'angry'
+        ];
+        $headers = [
+            'Accept'     => 'application/json',
+            'Authorization'      => "Bearer ".$this->token
+        ];
+        $response = $this->client->post('emojis', [
+            'exceptions' => false,
+            'json' => $data,
+            'headers' => $headers
+        ]);
+        return $response;
+    }
+
+
+
     public static function tearDownAfterClass()
     {
         SetUpDb::tearDown();
