@@ -1,6 +1,7 @@
 #Naija Emojicon
 [![Build Status](https://travis-ci.org/andela-gjames/Emoji-API.svg?branch=develop)](https://travis-ci.org/andela-gjames/Emoji-API)
 [![StyleCI](https://styleci.io/repos/48481296/shield)](https://styleci.io/repos/48481296)
+[![Coverage Status](https://coveralls.io/repos/andela-gjames/Emoji-API/badge.svg?branch=develop&service=github)](https://coveralls.io/github/andela-gjames/Emoji-API?branch=develop)
 
 Naija Emojicon is a RESTFUL API for creating, retrieving and manipuling Emojis
 
@@ -27,7 +28,7 @@ curl -i -X POST -H 'Content-Type: application/json' -d '{"username": "test-user"
 `post` request to `http://base_uri/emojis` with `token` in header and data in the body of the request.
 
 ```curl
-curl -i -X POST -H 'Content-Type: application/json' -d 
+curl -i -X POST -H 'Content-Type: application/json' -d
  '{
     "name": "Happy Face",
     "char": ")",
@@ -35,19 +36,19 @@ curl -i -X POST -H 'Content-Type: application/json' -d
       "happy"
     ],
   "category": "Happy"
-}' 
+}'
 https://api-emojicon-staging.herokuapp.com/emojis
 ```
 
 #####Updating an Emoji
 `put` request to `http://base_uri/emojis/{id of emoji}`, with `token` in header and new data in the body of the request
 ```curl
-curl -i -X PUT -H 'Content-Type: application/json' -d 
+curl -i -X PUT -H 'Content-Type: application/json' -d
  '{
     "name": "New Happy Face",
     "char": ")",
     "category": "Happy"
-}' 
+}'
 https://api-emojicon-staging.herokuapp.com/emojis/{id}
 ```
 #####Deleting an Emoji
