@@ -38,5 +38,6 @@ class SetUpDb
         Emoji::truncate();
         EmojiKeyword::truncate();
 
+        Schema::dropAllSchema();
     }
 }
