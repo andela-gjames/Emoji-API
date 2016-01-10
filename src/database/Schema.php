@@ -31,9 +31,9 @@ class Schema
 
         if (!Capsule::schema()->hasTable('keywords')) {
             Capsule::schema()->create('keywords', function($table) {
-                $table->increments('id')->onDelete('cascade');
-                $table->string('name')->onDelete('cascade');
-                $table->integer('emoji_id')->onDelete('cascade');
+                $table->increments('id');
+                $table->string('name');
+                $table->integer('emoji_id');
 //                $table->foreign('emoji_id')->references('id')->on('emoji')->onDelete('cascade');
             });
         }
