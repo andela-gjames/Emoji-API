@@ -39,10 +39,11 @@ class APITest extends \PHPUnit_Framework_TestCase
              ]
          );
         $result         =   json_decode($response->getBody(), true);
-        $users = User::all();
 
-        $this->assertSame(User::auth('test-root', 'test-root')->username, $result);
+        $this->assertSame($result['status'], 'success');
+        $this->assertSame($response->getStatusCode(), 200);
     }
+
 
     public function testCorrect()
     {
