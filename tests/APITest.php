@@ -1,11 +1,10 @@
 <?php
-namespace BB8\Emoji\Tests;
-use GuzzleHttp\Client;
-use BB8\Emoji\Tests\mocks\SetUpDb;
 
-use BB8\Emoji\Models\User;
+namespace BB8\Emoji\Tests;
+
 use BB8\Emoji\Models\Emoji;
-use BB8\Emoji\Models\EmojiKeyword;
+use BB8\Emoji\Tests\mocks\SetUpDb;
+use GuzzleHttp\Client;
 
 class APITest extends \PHPUnit_Framework_TestCase
 {
@@ -18,27 +17,27 @@ class APITest extends \PHPUnit_Framework_TestCase
         static::$mockIds = SetUpDb::setUp();
         static::$client = new Client([
             'base_uri' => getenv('base_uri'),
-            'timeout'  => 10000.0
+            'timeout'  => 10000.0,
         ]);
 
-        $response   =   static::$client->post('auth/login', [
-            'exceptions' => false,
-            'form_params' => ['username' => 'test-root', 'password' => 'test-root']
+        $response = static::$client->post('auth/login', [
+            'exceptions'  => false,
+            'form_params' => ['username' => 'test-root', 'password' => 'test-root'],
         ]);
-        $login         =   json_decode($response->getBody(), true);
-        static::$token    =   $login['token'];
+        $login = json_decode($response->getBody(), true);
+        static::$token = $login['token'];
     }
 
     public function testAuthLogin()
     {
-         $response   =   static::$client->post(
+        $response = static::$client->post(
              'auth/login',
              [
-             'exceptions'=> false,
-             'form_params' => ['username' => 'test-root', 'password' => 'test-root']
+             'exceptions'  => false,
+             'form_params' => ['username' => 'test-root', 'password' => 'test-root'],
              ]
          );
-        $result         =   json_decode($response->getBody(), true);
+        $result = json_decode($response->getBody(), true);
 
         $this->assertNotNull($result['token']);
         $this->assertSame($response->getStatusCode(), 200);
@@ -46,11 +45,11 @@ class APITest extends \PHPUnit_Framework_TestCase
 
     public function testAuthLoginFailed()
     {
-        $response   =   static::$client->post('auth/login', [
-            'exceptions'=> false,
-            'form_params' => ['username' => 'root', 'password' => 'not-root']
+        $response = static::$client->post('auth/login', [
+            'exceptions'  => false,
+            'form_params' => ['username' => 'root', 'password' => 'not-root'],
         ]);
-        $result        =   json_decode($response->getBody(), true);
+        $result = json_decode($response->getBody(), true);
 
         $this->assertSame($result['status'], 'error');
         $this->assertSame($response->getStatusCode(), 401);
@@ -58,9 +57,9 @@ class APITest extends \PHPUnit_Framework_TestCase
 
     public function testGetAllEmojis()
     {
-        $response   =   static::$client->get('emojis', ['exceptions'=> false]);
+        $response = static::$client->get('emojis', ['exceptions' => false]);
 
-        $data       =   json_decode($response->getBody(), true);
+        $data = json_decode($response->getBody(), true);
 
         $this->assertSame($response->getStatusCode(), 200);
         $this->assertSame($response->getHeader('Content-Type')[0], 'application/json');
@@ -68,15 +67,14 @@ class APITest extends \PHPUnit_Framework_TestCase
 //        $this->assertSame($data[0]['category'], 'Happy');
     }
 
-
     public function testGetSingleEmoji()
     {
-        $emojiId    =   static::$mockIds['emojiId'];
-        $keywordID   =   static::$mockIds['keywordsId'][0];
+        $emojiId = static::$mockIds['emojiId'];
+        $keywordID = static::$mockIds['keywordsId'][0];
 
-        $response       =   static::$client->get("emojis/$emojiId", ['exceptions'=> false]);
-        $contentType    =   $response->getHeader('Content-Type')[0];
-        $data           =   json_decode($response->getBody(), true);
+        $response = static::$client->get("emojis/$emojiId", ['exceptions' => false]);
+        $contentType = $response->getHeader('Content-Type')[0];
+        $data = json_decode($response->getBody(), true);
 
         $this->assertSame($response->getStatusCode(), 200);
         $this->assertSame($data['keywords'][$keywordID], 'happy');
@@ -85,17 +83,16 @@ class APITest extends \PHPUnit_Framework_TestCase
 
     public function testGetSingleEmojiFailed()
     {
-        $response    =   static::$client->get('emojis/100', ['exceptions'=> false]);
-        $data   =   json_decode($response->getBody(), true);
+        $response = static::$client->get('emojis/100', ['exceptions' => false]);
+        $data = json_decode($response->getBody(), true);
         $this->assertSame($response->getStatusCode(), 404);
         $this->assertSame($data['status'], 'error');
     }
 
-
     public function testInsertEmoji()
     {
         $response = $this->setUpInsertData(static::$mockIds['userId']);
-        $data =   json_decode($response->getBody(), true);
+        $data = json_decode($response->getBody(), true);
         $this->assertSame($response->getStatusCode(), 201);
         $this->assertSame($response->getHeader('Content-Type')[0], 'application/json');
         $this->assertSame($data['status'], 'success');
@@ -104,84 +101,82 @@ class APITest extends \PHPUnit_Framework_TestCase
 
     public function testUpdateEmoji()
     {
-
         $emojiId = static::$mockIds['emojiId'];
 
         $data = [
-            'name' => 'New Angry Face',
-            'char' => 'new angryfaceicon',
+            'name'     => 'New Angry Face',
+            'char'     => 'new angryfaceicon',
             'keywords' => [
-                '1002'=>'new angry keyword'
-            ]
+                '1002' => 'new angry keyword',
+            ],
         ];
         $headers = [
-            'Accept' => 'application/json',
-            'Authorization' => "Bearer ".static::$token
+            'Accept'        => 'application/json',
+            'Authorization' => 'Bearer '.static::$token,
         ];
         $response = static::$client->put("emojis/$emojiId", [
             'exceptions' => false,
-            'json' => $data,
-            'headers' => $headers
+            'json'       => $data,
+            'headers'    => $headers,
         ]);
         $result = json_decode($response->getBody(), true);
         $this->assertSame($response->getHeader('Content-Type')[0], 'application/json');
         $this->assertSame($result['status'], 'success');
     }
 
-
     public function testUpdateSideEffect()
     {
-        $emojiId    =   static::$mockIds['emojiId'];
-        $response    =   static::$client->get("emojis/$emojiId", ['exceptions'=> false]);
-        $data           =   json_decode($response->getBody(), true);
+        $emojiId = static::$mockIds['emojiId'];
+        $response = static::$client->get("emojis/$emojiId", ['exceptions' => false]);
+        $data = json_decode($response->getBody(), true);
         $this->assertSame($data['name'], 'New Angry Face');
         $this->assertSame($data['char'], 'new angryfaceicon');
     }
 
     public function testDelete()
     {
-
-        $emojiId    =   static::$mockIds['emojiId'];
+        $emojiId = static::$mockIds['emojiId'];
 
         $headers = [
-            'Accept' => 'application/json',
-            'Authorization' => "Bearer ".static::$token
+            'Accept'        => 'application/json',
+            'Authorization' => 'Bearer '.static::$token,
         ];
 
         $response = static::$client->delete("emojis/$emojiId", [
             'exceptions' => false,
-            'headers' => $headers
+            'headers'    => $headers,
         ]);
 
         $result = json_decode($response->getBody(), true);
         $this->assertSame($result['status'], 'success');
 
         //Test Side Effect
-        $response       =   static::$client->get("emojis/$emojiId", ['exceptions'=> false]);
-        $data           =   json_decode($response->getBody(), true);
+        $response = static::$client->get("emojis/$emojiId", ['exceptions' => false]);
+        $data = json_decode($response->getBody(), true);
         $this->assertSame($data['status'], 'error');
         $this->assertSame($data['message'], 'Emoji not found');
     }
 
     public function setUpInsertData()
     {
-         $data = [
-            'name' => 'Angry Face',
-            'char' => 'angryfacechar',
+        $data = [
+            'name'     => 'Angry Face',
+            'char'     => 'angryfacechar',
             'keywords' => [
-                'angry', 'annoyed'
+                'angry', 'annoyed',
             ],
-            'category' => 'angry'
+            'category' => 'angry',
         ];
         $headers = [
-            'Accept'     => 'application/json',
-            'Authorization'      => "Bearer ".static::$token
+            'Accept'             => 'application/json',
+            'Authorization'      => 'Bearer '.static::$token,
         ];
         $response = static::$client->post('emojis', [
             'exceptions' => false,
-            'json' => $data,
-            'headers' => $headers
+            'json'       => $data,
+            'headers'    => $headers,
         ]);
+
         return $response;
     }
 

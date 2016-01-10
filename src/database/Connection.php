@@ -1,4 +1,5 @@
 <?php
+
 namespace BB8\Emoji\Database;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -9,22 +10,21 @@ class Connection
     {
         $dotenv = new \Dotenv\Dotenv(__DIR__.'/../../');
 
-        if(!getenv('APP_ENV'))
-        {
+        if (!getenv('APP_ENV')) {
             $dotenv->load();
         }
 
         $this->capsule = new Capsule();
 
-        $this->capsule->addConnection(array(
+        $this->capsule->addConnection([
                 'driver'    => getenv('driver'),
                 'host'      => getenv('host'),
                 'database'  => getenv('database'),
                 'charset'   => getenv('charset'),
                 'username'  => getenv('username'),
                 'password'  => getenv('password'),
-                'collation' => getenv('collation')
-        ));
+                'collation' => getenv('collation'),
+        ]);
 
         $this->capsule->bootEloquent();
         $this->capsule->setAsGlobal();

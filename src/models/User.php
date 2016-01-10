@@ -1,6 +1,8 @@
 <?php
+
 namespace BB8\Emoji\Models;
-use \Illuminate\Database\Eloquent\Model as BaseModel;
+
+use Illuminate\Database\Eloquent\Model as BaseModel;
 
 class User extends BaseModel
 {
@@ -13,13 +15,14 @@ class User extends BaseModel
 
     public static function auth($username, $password)
     {
-        $user       =   static::where('username', '=', $username)->first();
+        $user = static::where('username', '=', $username)->first();
 
         if (isset($user->exists) && $user->exists) {
             if (strcmp(hash('sha256', $password), $user->password) == 0) {
                 return $user;
             }
         }
+
         return false;
     }
 
@@ -27,7 +30,7 @@ class User extends BaseModel
     {
         parent::boot();
 
-        static::deleting(function($user) {
+        static::deleting(function ($user) {
              $user->emojis()->delete();
         });
     }
