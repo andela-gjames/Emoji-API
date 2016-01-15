@@ -4,10 +4,17 @@ namespace BB8\Emoji\Database;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 
+/**
+Creates Schema for database 
+**/
 class Schema
 {
+    /**
+     * Generates all needed table for the application to run
+     */
     public static function createSchema()
     {
+        //Create users table if it does not exist already
         if (!Capsule::schema()->hasTable('users')) {
             Capsule::schema()->create('users', function ($table) {
                 $table->increments('id');
@@ -18,6 +25,7 @@ class Schema
             });
         }
 
+        //Create emojis table if it does not exist already
         if (!Capsule::schema()->hasTable('emojis')) {
             Capsule::schema()->create('emojis', function ($table) {
                 $table->increments('id');
@@ -25,21 +33,23 @@ class Schema
                 $table->string('char');
                 $table->string('category');
                 $table->integer('user_id');
-//                $table->foreign('user_id')->references('id')->on('users');
                 $table->timestamps();
             });
         }
-
+        
+        //Create keywords table if it does not exist already
         if (!Capsule::schema()->hasTable('keywords')) {
             Capsule::schema()->create('keywords', function($table) {
                 $table->increments('id');
                 $table->string('name');
                 $table->integer('emoji_id');
-//                $table->foreign('emoji_id')->references('id')->on('emoji')->onDelete('cascade');
             });
         }
     }
 
+    /**
+     * Drops all table in the application's database
+     */
     public static function dropAllSchema()
     {
         Capsule::schema()->dropIfExists('keywords');
