@@ -1,6 +1,6 @@
 vendor
 src/views
 .env
-dump
+dump.php
 /build
 /composer.phar
