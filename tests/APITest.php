@@ -12,14 +12,21 @@ class APITest extends \PHPUnit_Framework_TestCase
     private static $token;
     private static $mockIds;
 
+    /**
+     * Creates all database fields required to run test
+     */
     public static function setUpBeforeClass()
     {
+        //Set up database and get the ids of test data
         static::$mockIds = SetUpDb::setUp();
+        
+        //Create a new guzzleHttp client 
         static::$client = new Client([
             'base_uri' => getenv('base_uri'),
             'timeout'  => 10000.0,
         ]);
 
+        //Login user to get token for other operations during test
         $response = static::$client->post('auth/login', [
             'exceptions'  => false,
             'form_params' => ['username' => 'test-root', 'password' => 'test-root'],
@@ -28,6 +35,9 @@ class APITest extends \PHPUnit_Framework_TestCase
         static::$token = $login['token'];
     }
 
+    /**
+     * Test  user login and authentication
+     */
     public function testAuthLogin()
     {
         $response = static::$client->post(
@@ -43,6 +53,9 @@ class APITest extends \PHPUnit_Framework_TestCase
         $this->assertSame($response->getStatusCode(), 200);
     }
 
+    /**
+     * Test invalid credentials during user login
+     */
     public function testAuthLoginFailed()
     {
         $response = static::$client->post('auth/login', [
@@ -57,6 +70,9 @@ class APITest extends \PHPUnit_Framework_TestCase
     
     
 
+    /**
+     * Test return of all emojis from database
+     */
     public function testGetAllEmojis()
     {
         $response = static::$client->get('emojis', ['exceptions' => false]);
@@ -69,6 +85,9 @@ class APITest extends \PHPUnit_Framework_TestCase
         $this->assertSame($data[0]['category'], 'Happy');
     }
 
+    /**
+     * Test return of single emoji from database
+     */
     public function testGetSingleEmoji()
     {
         $emojiId = static::$mockIds['emojiId'];
@@ -83,6 +102,9 @@ class APITest extends \PHPUnit_Framework_TestCase
         $this->assertSame(str_replace('; charset=UTF-8', '', $response->getHeader('Content-Type')[0]), 'application/json');
     }
 
+    /**
+     * Test Emoji not found
+     */
     public function testGetSingleEmojiFailed()
     {
         $response = static::$client->get('emojis/100', ['exceptions' => false]);
@@ -91,6 +113,9 @@ class APITest extends \PHPUnit_Framework_TestCase
         $this->assertSame($data['message'], 'Emoji not found');
     }
 
+    /**
+     * Test inserting of new emoji
+     */
     public function testInsertEmoji()
     {
         $response = $this->setUpInsertData(static::$mockIds['userId']);
@@ -100,6 +125,9 @@ class APITest extends \PHPUnit_Framework_TestCase
         $this->assertSame($data['message'], 'Emoji created');
     }
 
+    /**
+     * Test update of an emoji
+     */
     public function testUpdateEmoji()
     {
         $emojiId = static::$mockIds['emojiId'];
@@ -127,6 +155,8 @@ class APITest extends \PHPUnit_Framework_TestCase
 
     /**
      * @depends testUpdateEmoji
+     * 
+     * Test side effect of updating an emoji
      */
     public function testUpdateSideEffect()
     {
@@ -137,6 +167,9 @@ class APITest extends \PHPUnit_Framework_TestCase
         $this->assertSame($data['char'], 'new angryfaceicon');
     }
 
+    /**
+     * Test delete of an emoji and its side effect
+     */
     public function testDelete()
     {
         $emojiId = static::$mockIds['emojiId'];
@@ -160,6 +193,9 @@ class APITest extends \PHPUnit_Framework_TestCase
         $this->assertSame($data['message'], 'Emoji not found');
     }
     
+    /**
+     * Test logout of a user from the emoji API
+     */
     public function testAuthLogout()
     {
         $headers = [
@@ -175,6 +211,10 @@ class APITest extends \PHPUnit_Framework_TestCase
         $this->assertSame($result['message'], 'user has been logged out');
     }
     
+    /**
+     * Sets up data for inserting test data for update test case
+     * @return ResponseInterface object the server response
+     */
     public function setUpInsertData()
     {
         $data = [
@@ -198,6 +238,9 @@ class APITest extends \PHPUnit_Framework_TestCase
         return $response;
     }
 
+    /**
+     * Destroys all data table used for test
+     */
     public static function tearDownAfterClass()
     {
         SetUpDb::tearDown();

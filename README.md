@@ -1,7 +1,7 @@
 #Naija Emojicon
 [![Build Status](https://travis-ci.org/andela-gjames/Emoji-API.svg?branch=develop)](https://travis-ci.org/andela-gjames/Emoji-API)
 [![StyleCI](https://styleci.io/repos/48481296/shield)](https://styleci.io/repos/48481296)
-[![Coverage Status](https://coveralls.io/repos/andela-gjames/Emoji-API/badge.svg?branch=develop&service=github)](https://coveralls.io/github/andela-gjames/Emoji-API?branch=develop)
+
 
 Naija Emojicon is a RESTFUL API for creating, retrieving and manipuling Emojis
 
