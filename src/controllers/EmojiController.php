@@ -3,10 +3,10 @@
 namespace BB8\Emoji\Controllers;
 
 use BB8\Emoji\Auth;
+use BB8\Emoji\Exceptions\EmojiException;
 use BB8\Emoji\Models\Emoji;
 use BB8\Emoji\Models\EmojiKeyword;
 use BB8\Emoji\Models\User;
-use BB8\Emoji\Exceptions\EmojiException;
 use Illuminate\Database\Capsule\Manager as DB;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -14,7 +14,8 @@ use Psr\Http\Message\ServerRequestInterface;
 class EmojiController extends BaseController
 {
     /**
-     * Intializes dependency container
+     * Intializes dependency container.
+     *
      * @param Container $container Slim dependency container
      */
     public function __construct($container)
@@ -23,11 +24,13 @@ class EmojiController extends BaseController
         parent::__construct($container);
     }
 
-     /**
-     * Index route for getting all Emojis
-     * @param  ServerRequestInterface ServerRequestInterface $request PSR-7 standard for receiving client request
-     * @param  ResponseInterface      ResponseInterface      $response     PSR-& standard for sending server response
-     * @return ResponseInterface      HTTP response of client request
+    /**
+     * Index route for getting all Emojis.
+     *
+     * @param ServerRequestInterface ServerRequestInterface $request  PSR-7 standard for receiving client request
+     * @param ResponseInterface      ResponseInterface      $response PSR-& standard for sending server response
+     *
+     * @return ResponseInterface HTTP response of client request
      */
     public function index(ServerRequestInterface $request, ResponseInterface $response)
     {
@@ -47,17 +50,19 @@ class EmojiController extends BaseController
         return $response;
     }
 
-     /**
-     * GETs a single Emoji
-     * @param  ServerRequestInterface ServerRequestInterface $request PSR-7 standard for receiving client request
-     * @param  ResponseInterface      ResponseInterface      $response     PSR-& standard for sending server response
-     * @return ResponseInterface      HTTP response of client request
+    /**
+     * GETs a single Emoji.
+     *
+     * @param ServerRequestInterface ServerRequestInterface $request  PSR-7 standard for receiving client request
+     * @param ResponseInterface      ResponseInterface      $response PSR-& standard for sending server response
+     *
+     * @return ResponseInterface HTTP response of client request
      */
     public function show(ServerRequestInterface $request, ResponseInterface $response, $argc)
     {
         //Get the single Emoji with the id from route
         $emoji = Emoji::find($argc['id']);
-        
+
         //Check if the Emoji with the id exist
         if ($emoji != null) {
             //Build Emoji data to return
@@ -75,26 +80,28 @@ class EmojiController extends BaseController
         return $response;
     }
 
-     /**
-     * Index route for getting all Emojis
-     * @param  ServerRequestInterface ServerRequestInterface $request PSR-7 standard for receiving client request
-     * @param  ResponseInterface      ResponseInterface      $response     PSR-& standard for sending server response
-     * @return ResponseInterface      HTTP response of client request
+    /**
+     * Index route for getting all Emojis.
+     *
+     * @param ServerRequestInterface ServerRequestInterface $request  PSR-7 standard for receiving client request
+     * @param ResponseInterface      ResponseInterface      $response PSR-& standard for sending server response
+     *
+     * @return ResponseInterface HTTP response of client request
      */
     public function create(ServerRequestInterface $request, ResponseInterface $response)
-    {   
+    {
         //Get Emoji data from request
         $data = $request->getParsedBody();
-        
+
         //Extract keywords from data
         $keywords = $data['keywords'];
-        
+
         //Decode token to get object of data
         $decodedToken = Auth::decodeToken($request->getHeader('Authorization')[0], $request);
-        
+
         //Check if user exist with the user id
         $user = User::find($decodedToken->data->uid);
-      
+
         //Generate emoji data to return
         $emoji = [
             'name'     => $data['name'],
@@ -107,34 +114,37 @@ class EmojiController extends BaseController
             $emoji = $user->emojis()->create($emoji);
 
             $keywordsObj = [];
-            
+
             //create emoji keyword objects
             foreach ($keywords as $keyword) {
                 $obj = new EmojiKeyword();
                 $obj->name = $keyword;
                 $keywordsObj[] = $obj;
             }
-            
+
             //Save all keywords objects
             $emoji->keywords()->saveMany($keywordsObj);
-        });    
+        });
 
         $response->getBody()->write(json_encode(['message' => 'Emoji created']));
+
         return $response;
     }
 
-     /**
-     * PUTs route for updating an Emoji
-     * @param  ServerRequestInterface ServerRequestInterface $request PSR-7 standard for receiving client request
-     * @param  ResponseInterface      ResponseInterface      $response     PSR-& standard for sending server response
-     * @param  array                  $argc     contains route query params
-     * @return ResponseInterface      HTTP response of client request
+    /**
+     * PUTs route for updating an Emoji.
+     *
+     * @param ServerRequestInterface ServerRequestInterface $request  PSR-7 standard for receiving client request
+     * @param ResponseInterface      ResponseInterface      $response PSR-& standard for sending server response
+     * @param array                                         $argc     contains route query params
+     *
+     * @return ResponseInterface HTTP response of client request
      */
     public function update(ServerRequestInterface $request, ResponseInterface $response, $argc)
     {
         //Get emoji to be updated
         $emoji = Emoji::with('keywords')->find($argc['id']);
-        
+
         $message = '';
         //Check that Emoji is not null then update if true
         if ($emoji != null) {
@@ -145,43 +155,49 @@ class EmojiController extends BaseController
         }
         //Write to response body and return $response
         $response->getBody()->write(json_encode($message));
+
         return $response;
     }
-    
+
     /**
-     * PUTs route for updating an Emoji Keyword
-     * @param  ServerRequestInterface ServerRequestInterface $request PSR-7 standard for receiving client request
-     * @param  ResponseInterface      ResponseInterface      $response     PSR-& standard for sending server response
-     * @param  array                  $argc     contains route query params
-     * @return ResponseInterface      HTTP response of client request
+     * PUTs route for updating an Emoji Keyword.
+     *
+     * @param ServerRequestInterface ServerRequestInterface $request  PSR-7 standard for receiving client request
+     * @param ResponseInterface      ResponseInterface      $response PSR-& standard for sending server response
+     * @param array                                         $argc     contains route query params
+     *
+     * @return ResponseInterface HTTP response of client request
      */
     public function updateKey(ServerRequestInterface $request, ResponseInterface $response, $argc)
     {
         //Get emoji
         $emoji = Emoji::with('keywords')->find($argc['id']);
-        
+
         //Get emoji keyword to be updated
         $keyword = $emoji->keywords()->find($argc['kId']);
-        
+
         //Ensure keyword is not null
-        if($keyword != null) {
+        if ($keyword != null) {
             $keyword->update($request->getParsedBody());
             $message = ['message' => 'Keyword updated'];
         } else {
             throw new EmojiException('Keyword not found', 404);
         }
-        
+
         //Write to response body and return $response
         $response->getBody()->write(json_encode($message));
+
         return $response;
     }
 
     /**
-     * DELETE route for deleting an Emoji
-     * @param  ServerRequestInterface ServerRequestInterface $request PSR-7 standard for receiving client request
-     * @param  ResponseInterface      ResponseInterface      $response     PSR-& standard for sending server response
-     * @param  integer                $argc     ID of Emoji to delete
-     * @return ResponseInterface      HTTP response of client request
+     * DELETE route for deleting an Emoji.
+     *
+     * @param ServerRequestInterface ServerRequestInterface $request  PSR-7 standard for receiving client request
+     * @param ResponseInterface      ResponseInterface      $response PSR-& standard for sending server response
+     * @param int                                           $argc     ID of Emoji to delete
+     *
+     * @return ResponseInterface HTTP response of client request
      */
     public function destroy(ServerRequestInterface $request, ResponseInterface $response, $argc)
     {
@@ -193,19 +209,22 @@ class EmojiController extends BaseController
                 $emoji->delete();
                 $emoji->keywords()->delete();
             });
-            $message = ['message'=>'Emoji has been deleted'];
+            $message = ['message' => 'Emoji has been deleted'];
         } else {
             $response = $response->withStatus(404);
             $message = ['message' => 'Emoji does not exist'];
         }
         $response->getBody()->write(json_encode($message));
+
         return $response;
     }
 
     /**
-     * Build an Eloquent Collection object into an array
-     * @param  Collection $emoji Eloquent object to build
-     * @return array      built emoji data to return
+     * Build an Eloquent Collection object into an array.
+     *
+     * @param Collection $emoji Eloquent object to build
+     *
+     * @return array built emoji data to return
      */
     private function buildEmojiData($emoji)
     {
@@ -216,7 +235,7 @@ class EmojiController extends BaseController
         $result['id'] = $emoji->id;
         $result['name'] = $emoji->name;
         $result['char'] = $emoji->char;
-        
+
         //Initialize keywords
         $keywords = [];
         //Popluate keywords

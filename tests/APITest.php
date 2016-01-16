@@ -54,8 +54,6 @@ class APITest extends \PHPUnit_Framework_TestCase
         $this->assertSame($result['message'], 'username or password incorrect');
         $this->assertSame($response->getStatusCode(), 401);
     }
-    
-    
 
     public function testGetAllEmojis()
     {
@@ -159,22 +157,22 @@ class APITest extends \PHPUnit_Framework_TestCase
         $data = json_decode($response->getBody(), true);
         $this->assertSame($data['message'], 'Emoji not found');
     }
-    
+
     public function testAuthLogout()
     {
         $headers = [
             'Accept'        => 'application/json',
             'Authorization' => 'Bearer '.static::$token,
         ];
-        $response = static::$client->get("auth/logout", [
+        $response = static::$client->get('auth/logout', [
             'exceptions' => false,
             'headers'    => $headers,
         ]);
         $result = json_decode($response->getBody(), true);
-        
+
         $this->assertSame($result['message'], 'user has been logged out');
     }
-    
+
     public function setUpInsertData()
     {
         $data = [

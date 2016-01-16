@@ -1,10 +1,11 @@
 <?php
 
 namespace BB8\Emoji\Models;
-use Carbon\Carbon;
-use Firebase\JWT\JWT;
+
 use BB8\Emoji\Exceptions\JWTException;
 use BB8\Emoji\Exceptions\TokenExpirationException;
+use Carbon\Carbon;
+use Firebase\JWT\JWT;
 use Illuminate\Database\Eloquent\Model as BaseModel;
 
 class User extends BaseModel
@@ -37,12 +38,14 @@ class User extends BaseModel
              $user->emojis()->delete();
         });
     }
-    
+
     /**
-     * Checks to see if token is valid
-     * @param  string  $token Decoded token to validate
-     * @param  integer $jit   JWT version
-     * @return string  status of the token
+     * Checks to see if token is valid.
+     *
+     * @param string $token Decoded token to validate
+     * @param int    $jit   JWT version
+     *
+     * @return string status of the token
      */
     public function isTokenValid($token)
     {
@@ -51,27 +54,32 @@ class User extends BaseModel
         } elseif (static::isTokenJITValid($token, $this->jit) == false) {
             throw new JWTException('Wrong token version', 401);
         }
+
         return true;
     }
 
     /**
-     * Check if token is expired
-     * @param  string  $token Decoded token to validate if expired
-     * @return boolean returns true if valid and false if expired
+     * Check if token is expired.
+     *
+     * @param string $token Decoded token to validate if expired
+     *
+     * @return bool returns true if valid and false if expired
      */
     public static function isTokenExpired($token)
     {
         $exp = date('Y-m-d H:m:s', $token->exp);
         $expireDate = new Carbon($exp);
+
         return Carbon::now()->gte($expireDate);
     }
 
-    
     /**
-     * Checks it JWT version is correct
-     * @param  string  $token Decoded token
-     * @param  integer $jit   Expected JWT version
-     * @return boolean true if valid and false if not valid JWT version
+     * Checks it JWT version is correct.
+     *
+     * @param string $token Decoded token
+     * @param int    $jit   Expected JWT version
+     *
+     * @return bool true if valid and false if not valid JWT version
      */
     public static function isTokenJITValid($token, $jit)
     {
