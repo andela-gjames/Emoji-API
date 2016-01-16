@@ -9,4 +9,3 @@ class TokenExpirationException extends \Exception
         parent::__construct($msg);
     }
 }
-

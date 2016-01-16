@@ -13,14 +13,14 @@ class APITest extends \PHPUnit_Framework_TestCase
     private static $mockIds;
 
     /**
-     * Creates all database fields required to run test
+     * Creates all database fields required to run test.
      */
     public static function setUpBeforeClass()
     {
         //Set up database and get the ids of test data
         static::$mockIds = SetUpDb::setUp();
-        
-        //Create a new guzzleHttp client 
+
+        //Create a new guzzleHttp client
         static::$client = new Client([
             'base_uri' => getenv('base_uri'),
             'timeout'  => 10000.0,
@@ -36,7 +36,7 @@ class APITest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test  user login and authentication
+     * Test  user login and authentication.
      */
     public function testAuthLogin()
     {
@@ -54,7 +54,7 @@ class APITest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test invalid credentials during user login
+     * Test invalid credentials during user login.
      */
     public function testAuthLoginFailed()
     {
@@ -69,7 +69,7 @@ class APITest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test return of all emojis from database
+     * Test return of all emojis from database.
      */
     public function testGetAllEmojis()
     {
@@ -84,7 +84,7 @@ class APITest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test return of single emoji from database
+     * Test return of single emoji from database.
      */
     public function testGetSingleEmoji()
     {
@@ -101,7 +101,7 @@ class APITest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Emoji not found
+     * Test Emoji not found.
      */
     public function testGetSingleEmojiFailed()
     {
@@ -112,7 +112,7 @@ class APITest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test inserting of new emoji
+     * Test inserting of new emoji.
      */
     public function testInsertEmoji()
     {
@@ -124,7 +124,7 @@ class APITest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test update of an emoji
+     * Test update of an emoji.
      */
     public function testUpdateEmoji()
     {
@@ -166,7 +166,7 @@ class APITest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test delete of an emoji and its side effect
+     * Test delete of an emoji and its side effect.
      */
     public function testDelete()
     {
@@ -190,9 +190,9 @@ class APITest extends \PHPUnit_Framework_TestCase
         $data = json_decode($response->getBody(), true);
         $this->assertSame($data['message'], 'Emoji not found');
     }
-    
+
     /**
-     * Test logout of a user from the emoji API
+     * Test logout of a user from the emoji API.
      */
     public function testAuthLogout()
     {
@@ -208,9 +208,10 @@ class APITest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($result['message'], 'user has been logged out');
     }
-    
+
     /**
-     * Sets up data for inserting test data for update test case
+     * Sets up data for inserting test data for update test case.
+     *
      * @return ResponseInterface object the server response
      */
     public function setUpInsertData()
@@ -237,7 +238,7 @@ class APITest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Destroys all data table used for test
+     * Destroys all data table used for test.
      */
     public static function tearDownAfterClass()
     {

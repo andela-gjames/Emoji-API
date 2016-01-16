@@ -13,7 +13,8 @@ class SetUpDb
     private static $conn;
 
     /**
-     * Create database tables required for testing
+     * Create database tables required for testing.
+     *
      * @return array array of test data created
      */
     public static function setUp()
@@ -27,7 +28,7 @@ class SetUpDb
         //Create connection and execute schema
         static::$conn = new Connection();
         Schema::createSchema();
-        
+
         //Add test data to user table if not exist or no errors returned
         $user = User::firstOrCreate(['username' => 'test-root', 'password' => hash('SHA256', 'test-root')]);
         $emojiData = [
@@ -51,7 +52,7 @@ class SetUpDb
     }
 
     /**
-     * undo all setup made for testing
+     * undo all setup made for testing.
      */
     public static function tearDown()
     {
