@@ -1,4 +1,5 @@
 <?php
+
 namespace BB8\Emoji\Exceptions;
 
 class JWTException extends \Exception

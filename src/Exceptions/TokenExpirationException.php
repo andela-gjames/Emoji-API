@@ -1,4 +1,5 @@
 <?php
+
 namespace BB8\Emoji\Exceptions;
 
 class TokenExpirationException extends \Exception
@@ -8,3 +9,4 @@ class TokenExpirationException extends \Exception
         parent::__construct($msg);
     }
 }
+

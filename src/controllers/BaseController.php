@@ -19,7 +19,8 @@ class BaseController
     protected $auth;
 
     /**
-     * Initialize controller with dependency container
+     * Initialize controller with dependency container.
+     *
      * @param Container $container Slim dependency container
      */
     public function __construct($container)
