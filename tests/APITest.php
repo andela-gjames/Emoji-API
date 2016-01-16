@@ -51,9 +51,11 @@ class APITest extends \PHPUnit_Framework_TestCase
         ]);
         $result = json_decode($response->getBody(), true);
 
-        $this->assertSame($result['status'], 'error');
+        $this->assertSame($result['message'], 'username or password incorrect');
         $this->assertSame($response->getStatusCode(), 401);
     }
+    
+    
 
     public function testGetAllEmojis()
     {
@@ -62,9 +64,9 @@ class APITest extends \PHPUnit_Framework_TestCase
         $data = json_decode($response->getBody(), true);
 
         $this->assertSame($response->getStatusCode(), 200);
-        $this->assertSame($response->getHeader('Content-Type')[0], 'application/json');
-//        $this->assertSame($data, 'Happy Face');
-//        $this->assertSame($data[0]['category'], 'Happy');
+        $this->assertSame(str_replace('; charset=UTF-8', '', $response->getHeader('Content-Type')[0]), 'application/json');
+        $this->assertSame($data[0]['name'], 'Happy Face');
+        $this->assertSame($data[0]['category'], 'Happy');
     }
 
     public function testGetSingleEmoji()
@@ -78,7 +80,7 @@ class APITest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($response->getStatusCode(), 200);
         $this->assertSame($data['keywords'][$keywordID], 'happy');
-        $this->assertSame($response->getHeader('Content-Type')[0], 'application/json');
+        $this->assertSame(str_replace('; charset=UTF-8', '', $response->getHeader('Content-Type')[0]), 'application/json');
     }
 
     public function testGetSingleEmojiFailed()
@@ -86,17 +88,16 @@ class APITest extends \PHPUnit_Framework_TestCase
         $response = static::$client->get('emojis/100', ['exceptions' => false]);
         $data = json_decode($response->getBody(), true);
         $this->assertSame($response->getStatusCode(), 404);
-        $this->assertSame($data['status'], 'error');
+        $this->assertSame($data['message'], 'Emoji not found');
     }
 
     public function testInsertEmoji()
     {
         $response = $this->setUpInsertData(static::$mockIds['userId']);
         $data = json_decode($response->getBody(), true);
-        $this->assertSame($response->getStatusCode(), 201);
-        $this->assertSame($response->getHeader('Content-Type')[0], 'application/json');
-        $this->assertSame($data['status'], 'success');
-        $this->assertSame($data['message'], 'Emoji created sucessfully');
+        $this->assertSame($response->getStatusCode(), 200);
+        $this->assertSame(str_replace('; charset=UTF-8', '', $response->getHeader('Content-Type')[0]), 'application/json');
+        $this->assertSame($data['message'], 'Emoji created');
     }
 
     public function testUpdateEmoji()
@@ -120,10 +121,13 @@ class APITest extends \PHPUnit_Framework_TestCase
             'headers'    => $headers,
         ]);
         $result = json_decode($response->getBody(), true);
-        $this->assertSame($response->getHeader('Content-Type')[0], 'application/json');
-        $this->assertSame($result['status'], 'success');
+        $this->assertSame(str_replace('; charset=UTF-8', '', $response->getHeader('Content-Type')[0]), 'application/json');
+        $this->assertSame($result['message'], 'Emoji updated');
     }
 
+    /**
+     * @depends testUpdateEmoji
+     */
     public function testUpdateSideEffect()
     {
         $emojiId = static::$mockIds['emojiId'];
@@ -148,15 +152,29 @@ class APITest extends \PHPUnit_Framework_TestCase
         ]);
 
         $result = json_decode($response->getBody(), true);
-        $this->assertSame($result['status'], 'success');
+        $this->assertSame($result['message'], 'Emoji has been deleted');
 
         //Test Side Effect
         $response = static::$client->get("emojis/$emojiId", ['exceptions' => false]);
         $data = json_decode($response->getBody(), true);
-        $this->assertSame($data['status'], 'error');
         $this->assertSame($data['message'], 'Emoji not found');
     }
-
+    
+    public function testAuthLogout()
+    {
+        $headers = [
+            'Accept'        => 'application/json',
+            'Authorization' => 'Bearer '.static::$token,
+        ];
+        $response = static::$client->get("auth/logout", [
+            'exceptions' => false,
+            'headers'    => $headers,
+        ]);
+        $result = json_decode($response->getBody(), true);
+        
+        $this->assertSame($result['message'], 'user has been logged out');
+    }
+    
     public function setUpInsertData()
     {
         $data = [

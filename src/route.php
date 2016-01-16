@@ -51,7 +51,8 @@ $app->post('/signup', 'BB8\Emoji\Controllers\UserController:create');
 $app->post('/auth/login', 'BB8\Emoji\Controllers\UserController:login');
 
 //Logout Route
-$app->get('/auth/logout', 'BB8\Emoji\Controllers\UserController:logout');
+$app->get('/auth/logout', 'BB8\Emoji\Controllers\UserController:logout')
+    ->add('BB8\Emoji\Middleware:authorize');
 
 //List all emojis Route
 $app->get('/emojis', 'BB8\Emoji\Controllers\EmojiController:index');
@@ -61,7 +62,7 @@ $app->get('/emojis/{id}', 'BB8\Emoji\Controllers\EmojiController:show');
 
 //Adds a new Emoji
 $app->post('/emojis', 'BB8\Emoji\Controllers\EmojiController:create')
-    ->add('BB8\Emoji\Middleware:authorize');;
+    ->add('BB8\Emoji\Middleware:authorize');
 
 //Updates an Emoji
 $app->put('/emojis/{id}', 'BB8\Emoji\Controllers\EmojiController:update')
@@ -73,11 +74,11 @@ $app->put('/emojis/{id}/{kId}', 'BB8\Emoji\Controllers\EmojiController:updateKey
 
 //Partially Updates an Emoji
 $app->patch('/emojis/{id}', 'BB8\Emoji\Controllers\EmojiController:update')
-    ->add('BB8\Emoji\Middleware:authorize');;
+    ->add('BB8\Emoji\Middleware:authorize');
 
 //Deletes an Emoji
 $app->delete('/emojis/{id}', 'BB8\Emoji\Controllers\EmojiController:destroy')
-    ->add('BB8\Emoji\Middleware:authorize');;
+    ->add('BB8\Emoji\Middleware:authorize');
 
 //Load and run the application
 $app->run();

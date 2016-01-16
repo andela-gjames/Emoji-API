@@ -65,7 +65,7 @@ class EmojiController extends BaseController
         } else {
             //Repond with 404 if Emoji not found
             $response = $response->withStatus(404);
-            $result = $this->getMessage(static::EMOJINOTFOUNDERROR, $response, 404);
+            $result = ['message' => 'Emoji not found'];
         }
 
         //Write message to response interface

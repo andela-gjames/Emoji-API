@@ -35,23 +35,22 @@ class UserController extends BaseController
      */
     public function create(ServerRequestInterface $request, ResponseInterface $response)
     {
-        //Initialize response and get body of response to write to
-        $response = $response->withAddedHeader('content-type', 'application/json');
+        //Get the parsed data
         $data = $request->getParsedBody();
-        $body = $response->getBody();
 
         //Ensure user does not exist already
         $user = User::where('username', '=', $data['username'])->first();
         if ($user == null) {
             //Create user
             User::create(['username' => $data['username'], 'password' => hash('SHA256', $data['password'])]);
-            $message = $this->getMessage(static::USERCREATED, $response);
+            $message = ['message' => 'User created'];
         } else {
             //Return message that user already exists
-            $message = $this->getMessage('user already exists', $response, 200);
+            $response = $response->withStatus(409);
+            $message = ['message' => 'User already exists'];
         }
 
-        $body->write(json_encode($message));
+        $response->getBody()->write(json_encode($message));
 
         return $response;
     }
@@ -64,10 +63,7 @@ class UserController extends BaseController
      */
     public function login(ServerRequestInterface $request, ResponseInterface $response)
     {
-        //Initialize response type and get body to write to 
-        $response = $response->withAddedHeader('Content-type', 'application/json');
         $data = $request->getParsedBody();
-        $response_body = $response->getBody();
 
         //Check to make sure user sends username and password
         if (isset($data['username'], $data['password'])) {
@@ -83,14 +79,15 @@ class UserController extends BaseController
                 $message = ['token' => $token];
             } else {
                 //Message when username or password is incorrect
-                $message = $this->getMessage(static::AUTHENTICATIONERROR, $response, 401);
+                $response = $response->withStatus(401);
+                $message = ['message' => 'username or password incorrect'];
             }
         } else {
-            //Message when username or password is not set
-            $message = $this->getMessage(static::BADREQUESTERROR, $response, 400);
+            $response = $response->withStatus(400);
+            $message = ['message' => 'Username or password not set'];
         }
 
-        $response_body->write(json_encode($message));
+        $response->getBody()->write(json_encode($message));
 
         return $response;
     }
@@ -103,28 +100,19 @@ class UserController extends BaseController
      */
     public function logout(ServerRequestInterface $request, ResponseInterface $response)
     {
-        //Intialize response, get body and token
-        $response = $response->withAddedHeader('content-type', 'application/json');
+        //Get the token, format and decode
         $token = $request->getHeader('Authorization');
-        $body = $response->getBody();
-        
-        //Format token and decode
         $token = str_replace('Bearer ', '', $token[0]);
         $data = JWT::decode($token, getenv('SECRET_KEY'), ['HS256']);
 
         //Ensure user in token exist and is valid
         $user = User::find($data->data->uid);
-
-        //Authenticate that token is valid
-        $message = $this->authenticateRouteRequest($token, $user->jit, $response, 'You have been logged out');
-
-        //If token is valid set jit to null save user
-        if ($message['status'] === 'success') {
-            $user->jit = null;
-            $user->save();
-        }
-
-        $body->write(json_encode($message));
+        
+        $user->jit = null;
+        $user->save();
+        
+        
+        $response->getBody()->write(json_encode(['message' => 'user has been logged out']));
 
         return $response;
     }
