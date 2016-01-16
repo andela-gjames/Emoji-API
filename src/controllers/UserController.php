@@ -25,8 +25,6 @@ class UserController extends BaseController
     {
         $body = $response->getBody();
         $body->write('<H1>WELCOME TO EMOJICON</H1>');
-
-        return $response;
     }
 
     /**

@@ -6,6 +6,7 @@ use \Slim\Container;
 use BB8\Emoji\Database\Connection;
 use BB8\Emoji\Database\Schema;
 use BB8\Emoji\Models\User;
+use BB8\Emoji\Middleware;
 
 //Create connection to database
 $connection = new Connection();
@@ -21,11 +22,7 @@ $container['errorHandler'] = function ($container) {
     return function ($request, $response, $exception) use ($container) {
         //Format of exception to return
         $data = [
-            'code'    => $exception->getCode(),
-            'message' => $exception->getMessage(),
-            'file'    => $exception->getFile(),
-            'line'    => $exception->getLine(),
-            'trace'   => explode("\n", $exception->getTraceAsString()),
+            'message' => $exception->getMessage()
         ];
         return $container->get('response')->withStatus(500)
             ->withHeader('Content-Type', 'application/json')
@@ -40,6 +37,9 @@ $container['auth'] = function ($container) {
 
 //Initialize the slim app
 $app = new App($container);
+
+//Add middleware at app level
+$app->add('BB8\Emoji\Middleware:init');
 
 //Index page
 $app->get('/', 'BB8\Emoji\Controllers\UserController:index');
@@ -60,16 +60,24 @@ $app->get('/emojis', 'BB8\Emoji\Controllers\EmojiController:index');
 $app->get('/emojis/{id}', 'BB8\Emoji\Controllers\EmojiController:show');
 
 //Adds a new Emoji
-$app->post('/emojis', 'BB8\Emoji\Controllers\EmojiController:create');
+$app->post('/emojis', 'BB8\Emoji\Controllers\EmojiController:create')
+    ->add('BB8\Emoji\Middleware:authorize');;
 
 //Updates an Emoji
-$app->put('/emojis/{id}', 'BB8\Emoji\Controllers\EmojiController:update');
+$app->put('/emojis/{id}', 'BB8\Emoji\Controllers\EmojiController:update')
+    ->add('BB8\Emoji\Middleware:authorize');
+
+//Updates an Emoji Keyword
+$app->put('/emojis/{id}/{kId}', 'BB8\Emoji\Controllers\EmojiController:updateKey')
+    ->add('BB8\Emoji\Middleware:authorize');
 
 //Partially Updates an Emoji
-$app->patch('/emojis/{id}', 'BB8\Emoji\Controllers\EmojiController:update');
+$app->patch('/emojis/{id}', 'BB8\Emoji\Controllers\EmojiController:update')
+    ->add('BB8\Emoji\Middleware:authorize');;
 
 //Deletes an Emoji
-$app->delete('/emojis/{id}', 'BB8\Emoji\Controllers\EmojiController:destroy');
+$app->delete('/emojis/{id}', 'BB8\Emoji\Controllers\EmojiController:destroy')
+    ->add('BB8\Emoji\Middleware:authorize');;
 
 //Load and run the application
 $app->run();

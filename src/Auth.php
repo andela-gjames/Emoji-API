@@ -4,74 +4,42 @@ namespace BB8\Emoji;
 
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
+use BB8\Emoji\Exceptions\JWTException;
+use BB8\Emoji\Exceptions\TokenExpirationException;
 
 class Auth
 {
-    /**
-     * Checks to see if token is valid
-     * @param  string  $token Raw token to validate
-     * @param  integer $jit   JWT version
-     * @return string  status of the token
-     */
-    public function isTokenValid($token, $jit)
-    {
-        $result = null;
-        if ($this->isTokenExpired($token) == true) {
-            $result = 'Expired';
-        } elseif ($this->isTokenJITValid($token, $jit) == false) {
-            $result = 'Invalid Token Version';
-        }
-
-        return $result;
-    }
-
-    /**
-     * Check if token is expired
-     * @param  string  $token Raw token to validate if expired
-     * @return boolean returns true if valid and false if expired
-     */
-    public function isTokenExpired($token)
-    {
-        $token = $this->decodeToken($token);
-
-        $exp = date('Y-m-d H:m:s', $token->exp);
-        $expireDate = new Carbon($exp);
-
-        return Carbon::now()->gte($expireDate);
-    }
-
-    
-    /**
-     * Checks it JWT version is correct
-     * @param  string  $token Raw token
-     * @param  integer $jit   Expected JWT version
-     * @return boolean true if valid and false if not valid JWT version
-     */
-    public function isTokenJITValid($token, $jit)
-    {
-        $token = $this->decodeToken($token);
-
-        return intval($token->jit) === intval($jit);
-    }
-
     /**
      * Decodes the token into an Object
      * @param  string $token Raw token to decode
      * @return object decoded token
      */
-    public function decodeToken($token)
+    public static function decodeToken($token)
     {
+        $token = trim($token);
         //Check to ensure token is not empty or invalid
-        if ($token == '' || $token == null) {
-            throw new \Exception('Invalid Token');
+        if ($token === '' || $token === null || empty($token)) {
+            throw new JWTException('Invalid Token');
         }
-
-        //Remove Bearer if presetn
-        $token = str_replace('Bearer ', '', $token);
+        //Remove Bearer if present
+        $token = trim(str_replace('Bearer ', '', $token));
         
         //Decode token
-        $token = JWT::decode($token, getenv('SECRET_KEY'), ['HS256']);
-
+        try{
+            $token = JWT::decode($token, getenv('SECRET_KEY'), array('HS256'));
+        } catch(\Exception $e) {
+            throw new JWTException("Invalid Token");
+        }
+        
+        //Ensure JIT is present
+        if ($token->jit == null || $token->jit == "") {
+            throw new JWTException('Invalid Token');
+        }
+        
+        //Ensure User Id is present
+        if ($token->data->uid == null || $token->data->uid == "") {
+            throw new JWTException("Invalid Token");
+        }
         return $token;
     }
 }
