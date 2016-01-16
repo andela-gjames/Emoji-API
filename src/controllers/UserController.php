@@ -16,10 +16,12 @@ class UserController extends BaseController
     }
 
     /**
-     * Homepage route 
-     * @param  ServerRequestInterface ServerRequestInterface $request PSR-7 standard for receiving client request
-     * @param  ResponseInterface      ResponseInterface      $response     PSR-& standard for sending server response
-     * @return ResponseInterface      HTTP response of client request
+     * Homepage route.
+     *
+     * @param ServerRequestInterface ServerRequestInterface $request  PSR-7 standard for receiving client request
+     * @param ResponseInterface      ResponseInterface      $response PSR-& standard for sending server response
+     *
+     * @return ResponseInterface HTTP response of client request
      */
     public function index(ServerRequestInterface $request, ResponseInterface $response)
     {
@@ -28,10 +30,12 @@ class UserController extends BaseController
     }
 
     /**
-     * PUTS route for creating a user
-     * @param  ServerRequestInterface ServerRequestInterface $request PSR-7 standard for receiving client request
-     * @param  ResponseInterface      ResponseInterface      $response     PSR-& standard for sending server response
-     * @return ResponseInterface      HTTP response of client request
+     * PUTS route for creating a user.
+     *
+     * @param ServerRequestInterface ServerRequestInterface $request  PSR-7 standard for receiving client request
+     * @param ResponseInterface      ResponseInterface      $response PSR-& standard for sending server response
+     *
+     * @return ResponseInterface HTTP response of client request
      */
     public function create(ServerRequestInterface $request, ResponseInterface $response)
     {
@@ -56,10 +60,12 @@ class UserController extends BaseController
     }
 
     /**
-     * Auth/Login route for logging a user in
-     * @param  ServerRequestInterface ServerRequestInterface $request PSR-7 standard for receiving client request
-     * @param  ResponseInterface      ResponseInterface      $response     PSR-& standard for sending server response
-     * @return ResponseInterface      HTTP response of client request
+     * Auth/Login route for logging a user in.
+     *
+     * @param ServerRequestInterface ServerRequestInterface $request  PSR-7 standard for receiving client request
+     * @param ResponseInterface      ResponseInterface      $response PSR-& standard for sending server response
+     *
+     * @return ResponseInterface HTTP response of client request
      */
     public function login(ServerRequestInterface $request, ResponseInterface $response)
     {
@@ -93,10 +99,12 @@ class UserController extends BaseController
     }
 
     /**
-     * Auth/Logout route for logging a user out
-     * @param  ServerRequestInterface ServerRequestInterface $request PSR-7 standard for receiving client request
-     * @param  ResponseInterface      ResponseInterface      $response     PSR-& standard for sending server response
-     * @return ResponseInterface      HTTP response of client request
+     * Auth/Logout route for logging a user out.
+     *
+     * @param ServerRequestInterface ServerRequestInterface $request  PSR-7 standard for receiving client request
+     * @param ResponseInterface      ResponseInterface      $response PSR-& standard for sending server response
+     *
+     * @return ResponseInterface HTTP response of client request
      */
     public function logout(ServerRequestInterface $request, ResponseInterface $response)
     {
@@ -107,30 +115,29 @@ class UserController extends BaseController
 
         //Ensure user in token exist and is valid
         $user = User::find($data->data->uid);
-        
+
         $user->jit = null;
         $user->save();
-        
-        
+
         $response->getBody()->write(json_encode(['message' => 'user has been logged out']));
 
         return $response;
     }
 
-  
     /**
-     * Builds the token to be served to user during login
-     * @param  integer $jit      JIT to verify JWT version
-     * @param  integer $uid      User ID
-     * @param  string  $username Username of user logged in
-     * @return string  JWT token s
+     * Builds the token to be served to user during login.
+     *
+     * @param int    $jit      JIT to verify JWT version
+     * @param int    $uid      User ID
+     * @param string $username Username of user logged in
+     *
+     * @return string JWT token s
      */
     private function buildToken($jit, $uid, $username)
     {
-        
         $today = Carbon::now(); //Initialize Time to now
-        $iat = strtotime($today->toDateTimeString()); // The time the token was created 
-        $exp = strtotime($today->addDays(10)->addHours(4)->toDateTimeString());//Time token will expire
+        $iat = strtotime($today->toDateTimeString()); // The time the token was created
+        $exp = strtotime($today->addDays(10)->addHours(4)->toDateTimeString()); //Time token will expire
 
         //Build data
         $data = [
@@ -142,7 +149,7 @@ class UserController extends BaseController
                             'username'  => $username,
                         ],
         ];
-        
+
         //Encode token
         $token = JWT::encode($data, getenv('SECRET_KEY'));
 

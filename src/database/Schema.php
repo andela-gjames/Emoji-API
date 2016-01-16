@@ -5,12 +5,12 @@ namespace BB8\Emoji\Database;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 /**
-Creates Schema for database 
-**/
+ Creates Schema for database 
+ **/
 class Schema
 {
     /**
-     * Generates all needed table for the application to run
+     * Generates all needed table for the application to run.
      */
     public static function createSchema()
     {
@@ -36,10 +36,10 @@ class Schema
                 $table->timestamps();
             });
         }
-        
+
         //Create keywords table if it does not exist already
         if (!Capsule::schema()->hasTable('keywords')) {
-            Capsule::schema()->create('keywords', function($table) {
+            Capsule::schema()->create('keywords', function ($table) {
                 $table->increments('id');
                 $table->string('name');
                 $table->integer('emoji_id');
@@ -48,7 +48,7 @@ class Schema
     }
 
     /**
-     * Drops all table in the application's database
+     * Drops all table in the application's database.
      */
     public static function dropAllSchema()
     {

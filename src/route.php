@@ -1,12 +1,13 @@
 <?php
+
 require 'vendor/autoload.php';
 
 use \Slim\App;
 use \Slim\Container;
 use BB8\Emoji\Database\Connection;
 use BB8\Emoji\Database\Schema;
-use BB8\Emoji\Models\User;
 use BB8\Emoji\Middleware;
+use BB8\Emoji\Models\User;
 
 //Create connection to database
 $connection = new Connection();
@@ -22,8 +23,9 @@ $container['errorHandler'] = function ($container) {
     return function ($request, $response, $exception) use ($container) {
         //Format of exception to return
         $data = [
-            'message' => $exception->getMessage()
+            'message' => $exception->getMessage(),
         ];
+
         return $container->get('response')->withStatus(500)
             ->withHeader('Content-Type', 'application/json')
             ->write(json_encode($data));

@@ -3,13 +3,14 @@
 namespace BB8\Emoji\Database;
 
 use Illuminate\Database\Capsule\Manager as Capsule;
+
 /**
-    Connection class creates a connection to the database
-**/
+ Connection class creates a connection to the database
+ **/
 class Connection
 {
     /**
-     * Creates connection to the database
+     * Creates connection to the database.
      */
     public function __construct()
     {
