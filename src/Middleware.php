@@ -2,7 +2,6 @@
 
 namespace BB8\Emoji;
 
-
 use BB8\Emoji\Exceptions\TokenExpirationException;
 use BB8\Emoji\Models\User;
 use Psr\Http\Message\ResponseInterface;
